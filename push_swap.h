@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/03/21 15:54:48 by bposa            ###   ########.fr       */
+/*   Updated: 2024/03/24 13:33:46 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,10 @@
 
 struct s_stack
 {
-	int	maxsize; //size (length) of the given input, stack_a
-	int	top; //(SIZE of the current array) indicates index of next insertion
-	int	*array; //pointer to given input arrray
+	char	name;
+	int		maxsize; //size (length) of the given input, stack_a
+	int		top; //(SIZE of the current array) indicates index of next insertion
+	int		*array; //pointer to given input arrray
 };
 
 #endif
