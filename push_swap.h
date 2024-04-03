@@ -44,10 +44,10 @@ int main() {
 
 struct s_stack
 {
-	char name;
-	int maxsize; // size (length) of the given input, stack_a
-	int top;	 //(SIZE of the current array) indicates index of next insertion
-	int *array;	 // pointer to given input arrray
+	char	name;
+	int		maxsize; // size (length) of the given input, stack_a
+	int		top;	 //(SIZE of the current array) indicates index of next insertion
+	int		*array;	 // pointer to given input arrray
 };
 
 // int		ft_printf();
@@ -62,6 +62,7 @@ int		swapper_util(struct s_stack *stack, char do_i_print);
 int		pusher(struct s_stack *from_stack, struct s_stack *into_stack);
 int		rotator(char reverse, char which_stck, struct s_stack *a, struct s_stack *b);
 int		rotate_util(char r_for_reverse, struct s_stack *stack, char do_i_print);
+int		is_sorted(struct s_stack *stack);
 
 #ifndef SUCCESS
 # define SUCCESS 0

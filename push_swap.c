@@ -11,7 +11,7 @@ void	printstack_top_bottom(struct s_stack *stack)
 	int test_i = 1;
 
 	printf("printout STACK %c: top=%d\n", stack->name, stack->top);
-	while (stack->top - test_i >= 0)
+	while (stack->top - test_i > -1)
 	{
 		printf("elem:%d at stack  position:%d\n", stack->array[stack->top - test_i], stack->top - test_i);
 		test_i++;
@@ -26,23 +26,14 @@ void	printstack_top_bottom(struct s_stack *stack)
 */
 // returns non-zero on error
 int main(int argc, char *argv[])
-{
+{ 
 	struct s_stack stack_a;
 	struct s_stack stack_b;
-	int test_i;
 
-	test_i = 1;
 	if(initializer(argc, argv, &stack_a, &stack_b) == ERROR)
 		return (ERROR);
 
 	// Push_Swap algo logic here
-	pusher(&stack_a, &stack_b);
-	pusher(&stack_a, &stack_b);
-	pusher(&stack_a, &stack_b);
-	pusher(&stack_a, &stack_b);
-	// swapper(&stack_b, &stack_a, NULL); 
-	rotator('\0', 'b', &stack_a, &stack_b);
-
 
 
 	printstack_top_bottom(&stack_a);

@@ -56,6 +56,26 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
     return(SUCCESS);
 }
 
+/* If sorted, returns SUCCESS, if not, returns ERROR
+//maybe can also find negative stack index of closest non-sorted item to stack top, as that may be useful */
+int is_sorted(struct s_stack *stack)
+{
+	unsigned int	i;
+
+	i = stack->top - 1;
+	if (stack->top == 0 || stack->top == 1)
+		return (-2);
+	while (i >= 1)
+	{
+		if (stack->name == 'a' && stack->array[i] >= stack->array[i - 1])
+			return (ERROR);
+		if (stack->name == 'b' && stack->array[i] <= stack->array[i - 1])
+			return (ERROR);
+		i--;
+	}
+	return (SUCCESS);
+}
+
 /*
 	swapper_util - does the actual swapping for swapper (sa or sb), and if print flag is 'p', prints out 'sa' or 'sb'
 */
