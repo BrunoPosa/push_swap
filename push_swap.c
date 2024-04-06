@@ -30,18 +30,22 @@ int main(int argc, char *argv[])
 	struct s_stack stack_a;
 	struct s_stack stack_b;
 
+	// input validator here
+
+	// initializer
 	if(initializer(argc, argv, &stack_a, &stack_b) == ERROR)
 		return (ERROR);
 
 	// Push_Swap algo logic here
+	printf("Index of MIN: %u, value: %d\n", find_min(&stack_a), stack_a.array[find_min(&stack_a)]);
+	printf("Mid value: %d\n", find_midvalue(&stack_a));
 
 
 	printstack_top_bottom(&stack_a);
 	printstack_top_bottom(&stack_b);
 
-
 	// clean up
 	free(stack_a.array);
-	free(stack_b.array);
+	free(stack_b.array); //general Q: is returning a call to a void funtion as well as a rvalue e.g. (free(s), -1) allowed per the Norm? 'One instruction per line'
 	return (SUCCESS);
 }

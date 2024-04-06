@@ -56,6 +56,58 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
     return(SUCCESS);
 }
 
+/*
+	find_midvalue returns the middle value in the given stack. I think I should not use midvalue when less than 4 numbers in stack
+*/
+int	find_midvalue(struct s_stack *stack)
+{
+	unsigned int	i;
+	unsigned int	j;
+	int				k;
+
+	i = 0;
+	j = 0;
+	k = 0;
+	if (stack->top < 4)
+		return (EMPTY);
+	while (i != stack->top)
+	{
+		j = 0;
+		k = 0;
+		while (j != stack->top)
+		{
+			if (stack->array[i] > stack->array[j])
+				k++;
+			j++;
+		}
+		if (k == (stack->top - 1) / 2)
+			return (stack->array[i]);
+		i++;
+	}
+	// return (ERROR);
+}
+
+/*
+	find_min returns unsigned int index of minimum value in the given stack.
+*/
+unsigned int find_min(struct s_stack *stack)
+{
+	unsigned int	i;
+	unsigned int	min;
+
+	i = 0;
+	min = 0;
+	if (stack->top == 0)
+		return (EMPTY);
+	while (i != stack->top)
+	{
+		if (stack->array[i] < stack->array[min])
+			min = i;
+		i++;
+	}
+	return (min);
+}
+
 /* If sorted, returns SUCCESS, if not, returns ERROR
 //maybe can also find negative stack index of closest non-sorted item to stack top, as that may be useful */
 int is_sorted(struct s_stack *stack)
