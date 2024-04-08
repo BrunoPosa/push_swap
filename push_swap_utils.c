@@ -57,30 +57,63 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 }
 
 /*
+	Sorts which_stack is specified, but only if containing exactly 3 elements.
+	Returns -1 if not 3 elems, OR on subfunction (Write) ERRORs
+*/
+int	sort_just_three(char which_stck, struct s_stack *a, struct s_stack *b)
+{
+	if ((which_stck == 'a' && a->top != 3) || (which_stck == 'b' && b->top != 3))
+		return (ERROR);
+	if (which_stck == 'a')
+	{
+		if (find_min(a) == 2)
+			return (rotator('r', 'a', a, b) + swapper(a, NULL)); //does this work? calls functions in order? Can still handle error? Should it execute 2nd function if 1st fails?
+		else if (find_min(a) == 1 && a->array[2] > a->array[0])
+			return (rotator('\0', 'a', a, b));
+		else if (find_min(a) == 1 && a->array[2] < a->array[0])
+			return (swapper(a, NULL));
+		else if (find_min(a) == 0 && a->array[2] > a->array[1])
+			return (swapper(a, NULL) + rotator('r', 'a', a, b));
+		else if (find_min(a) == 0 && a->array[2] < a->array[1])
+			return (rotator('r', 'a', a, b));
+	}
+	if (find_min(b) == 2 && b->array[0] > b->array[1])
+		return (rotator('\0', 'b', a, b) + swapper(b, NULL));
+	else if (find_min(b) == 2)
+		return (rotator('\0', 'b', a, b));
+	else if (find_min(b) == 1 && b->array[2] > b->array[0])
+		return (swapper(b, NULL) + rotator('\0', 'b', a, b));
+	else if (find_min(b) == 1)
+		return (rotator('r', 'b', a, b));
+	else if (find_min(b) == 0 && b->array[2] < b->array[1])
+		return (swapper(b, NULL));
+}
+
+/*
 	find_midvalue returns the middle value in the given stack. I think I should not use midvalue when less than 4 numbers in stack
 */
 int	find_midvalue(struct s_stack *stack)
 {
 	unsigned int	i;
 	unsigned int	j;
-	int				k;
+	int				smaller_values;
 
 	i = 0;
 	j = 0;
-	k = 0;
+	smaller_values = 0;
 	if (stack->top < 4)
 		return (EMPTY);
 	while (i != stack->top)
 	{
 		j = 0;
-		k = 0;
+		smaller_values = 0;
 		while (j != stack->top)
 		{
 			if (stack->array[i] > stack->array[j])
-				k++;
+				smaller_values++;
 			j++;
 		}
-		if (k == (stack->top - 1) / 2)
+		if (smaller_values == (stack->top - 1) / 2)
 			return (stack->array[i]);
 		i++;
 	}
@@ -117,7 +150,7 @@ int is_sorted(struct s_stack *stack)
 	i = stack->top - 1;
 	if (stack->top == 0 || stack->top == 1)
 		return (-2);
-	while (i >= 1)
+	while (i >= 1)//!=0 is better but needs testing
 	{
 		if (stack->name == 'a' && stack->array[i] >= stack->array[i - 1])
 			return (ERROR);
@@ -151,22 +184,22 @@ int swapper_util(struct s_stack *stack, char do_i_print)
 int swapper(struct s_stack *stack, ...)
 {
 	va_list(args);
-	struct s_stack *second_stack;
+	struct s_stack *stack_two;
 
 	va_start(args, stack);
-	second_stack = va_arg(args, struct s_stack *);
-	if (second_stack != NULL)
+	stack_two = va_arg(args, struct s_stack *);
+	if (stack_two != NULL)
 	{
-		if (swapper_util(stack, 'n') == -1 || swapper_util(second_stack, 'n') == -1) // maybe implement -1 and -2 handling
-			return(va_end(args), -1);
+		if (swapper_util(stack, 'n') == -1 || swapper_util(stack_two, 'n') == -1) // maybe implement -1 and -2 handling
+			return(va_end(args), ERROR);
 		return(va_end(args), printf("ss\n"));
 	}
 	else
 	{
 		if (swapper_util(stack, 'y') == -1)
-			return (va_end(args), -1);
+			return (va_end(args), ERROR);
 	}
-	return (va_end(args), 0); // SUCCESS
+	return (va_end(args), SUCCESS);
 }
 
 /*
