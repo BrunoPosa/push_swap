@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
 
 	// printf("Index of MIN: %u, value: %d\n", find_min(&stack_a), stack_a.array[find_min(&stack_a)]);
 	// printf("Mid value: %d\n", find_midvalue(&stack_a));
-	sort_just_three('a', &stack_a, &stack_b);
 
 	printstack_top_bottom(&stack_a);
 	printstack_top_bottom(&stack_b);

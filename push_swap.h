@@ -44,7 +44,7 @@ int main() {
 
 struct s_stack
 {
-	char	name;
+	char	name; // Arnold: change this from 'name' which sounds inconsequential into 'order' to clarify the ascending/descending property
 	int		maxsize; // size (length) of the given input, stack_a
 	int		top;	 //(SIZE of the current array) indicates index of next insertion
 	int		*array;	 // pointer to given input arrray
@@ -65,8 +65,7 @@ int		rotate_util(char r_for_reverse, struct s_stack *stack, char do_i_print);
 int		is_sorted(struct s_stack *stack);
 unsigned int	find_min(struct s_stack *stack);
 int		find_midvalue(struct s_stack *stack);
-int		sort_just_three(char which_stck, struct s_stack *a, struct s_stack *b);
-
+int		sort_three(struct s_stack *stack);
 
 #ifndef SUCCESS
 # define SUCCESS 0

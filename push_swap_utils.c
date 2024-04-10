@@ -58,35 +58,32 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 
 /*
 	Sorts which_stack is specified, but only if containing exactly 3 elements.
-	Returns -1 if not 3 elems, OR on subfunction (Write) ERRORs
+	Returns -1 if not 3 elems, OR on subfunctions' ERRORs
 */
-int	sort_just_three(char which_stck, struct s_stack *a, struct s_stack *b)
+int	sort_three(struct s_stack *stack)
 {
-	if ((which_stck == 'a' && a->top != 3) || (which_stck == 'b' && b->top != 3))
+	if (stack->top != 3)
 		return (ERROR);
-	if (which_stck == 'a')
+	if (is_sorted(stack) == SUCCESS)
+		return (SUCCESS);
+	if (find_min(stack) == 2 ||
+		(stack->name == 'a' && stack->array[1] > stack->array[2]))
 	{
-		if (find_min(a) == 2)
-			return (rotator('r', 'a', a, b) + swapper(a, NULL)); //does this work? calls functions in order? Can still handle error? Should it execute 2nd function if 1st fails?
-		else if (find_min(a) == 1 && a->array[2] > a->array[0])
-			return (rotator('\0', 'a', a, b));
-		else if (find_min(a) == 1 && a->array[2] < a->array[0])
-			return (swapper(a, NULL));
-		else if (find_min(a) == 0 && a->array[2] > a->array[1])
-			return (swapper(a, NULL) + rotator('r', 'a', a, b));
-		else if (find_min(a) == 0 && a->array[2] < a->array[1])
-			return (rotator('r', 'a', a, b));
+		if (rotate_util(stack->name + 17, stack, 'y') == ERROR)//reverse rotate if stack->name is 'a'(ascii 97 + 17 = 114 'r'), just rotate if else.
+			return (ERROR);
+		return (sort_three(stack));
 	}
-	if (find_min(b) == 2 && b->array[0] > b->array[1])
-		return (rotator('\0', 'b', a, b) + swapper(b, NULL));
-	else if (find_min(b) == 2)
-		return (rotator('\0', 'b', a, b));
-	else if (find_min(b) == 1 && b->array[2] > b->array[0])
-		return (swapper(b, NULL) + rotator('\0', 'b', a, b));
-	else if (find_min(b) == 1)
-		return (rotator('r', 'b', a, b));
-	else if (find_min(b) == 0 && b->array[2] < b->array[1])
-		return (swapper(b, NULL));
+	else if (find_min(stack) == 1 &&
+		((stack->name == 'a' && stack->array[2] > stack->array[0]) ||
+		(stack->name == 'b' && stack->array[2] < stack->array[0])))
+	{
+		if(rotate_util(stack->name + 16, stack, 'y') == ERROR)
+			return (ERROR);
+		return (sort_three(stack));
+	}
+	if (swapper_util(stack, 'y') == ERROR)
+		return (ERROR);
+	return (sort_three(stack));
 }
 
 /*
@@ -163,6 +160,7 @@ int is_sorted(struct s_stack *stack)
 
 /*
 	swapper_util - does the actual swapping for swapper (sa or sb), and if print flag is 'p', prints out 'sa' or 'sb'
+	RENAME TO SWAP_ONE
 */
 int swapper_util(struct s_stack *stack, char do_i_print)
 {
@@ -180,6 +178,7 @@ int swapper_util(struct s_stack *stack, char do_i_print)
 /*
 	swapper - variadic function taking in two or three arguments, the last MUST BE NULL as a sentinel,
 	otherwise undefined va_arg behaviour occurs. It calls swapper_util with flag to print or not print its own operation.
+	DISUSE VARIADIC FUNCTIONALITY, bc it is inconsistent in the project and char flag may do the job
 */
 int swapper(struct s_stack *stack, ...)
 {
@@ -225,6 +224,7 @@ int	pusher(struct s_stack *from_stack, struct s_stack *into_stack)
 /*
 	rotate_util - does the actual rotating, reverse or normal, depending on char r_for_reverse flag being 'r' or not.
 	Prints if do_i_print flag is 'y'. Returns 0 or positive num on success, and -1 on error or -2 if nothing to rotate.
+	RENAME TO ROTATE_ONE
 */
 int	rotate_util(char r_for_reverse, struct s_stack *stack, char do_i_print) //passing char flag instead of int or using a variadic function seems more optimal
 {
