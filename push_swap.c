@@ -10,13 +10,13 @@ void	printstack_top_bottom(struct s_stack *stack)
 {
 	int test_i = 1;
 
-	printf("printout STACK %c: top=%d\n", stack->name, stack->top);
+	printf("printout STACK %c: top=%ld\n", stack->name, stack->top);
 	while (stack->top - test_i > -1)
 	{
-		printf("elem:%d at stack  position:%d\n", stack->array[stack->top - test_i], stack->top - test_i);
+		printf("elem:%d at stack  position:%ld\n", stack->array[stack->top - test_i], stack->top - test_i);
 		test_i++;
 	}
-	printf("=Top: %d, size: %d\n___________________\n", stack->top, stack->maxsize);
+	printf("=Top: %ld, size: %ld\n___________________\n", stack->top, stack->maxsize);
 }
 
 /*
@@ -38,6 +38,12 @@ int main(int argc, char *argv[])
 
 	// Push_Swap algo logic here
 
+	pusher(&stack_a, &stack_b);
+	pusher(&stack_a, &stack_b);
+	pusher(&stack_a, &stack_b);
+	pusher(&stack_a, &stack_b);
+	pusher(&stack_a, &stack_b);
+	pusher(&stack_a, &stack_b);
 	// printf("Index of MIN: %u, value: %d\n", find_min(&stack_a), stack_a.array[find_min(&stack_a)]);
 	// printf("Mid value: %d\n", find_midvalue(&stack_a));
 
