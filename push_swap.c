@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
 	// initializer
 	if(initializer(argc, argv, &stack_a, &stack_b) == ERROR)
 		return (ERROR);
+
 	// Push_Swap algo logic here
 	if (is_sorted(&stack_a) == SUCCESS)
 		return (free(stack_a.array), free(stack_b.array), SUCCESS);
