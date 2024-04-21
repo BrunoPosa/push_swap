@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/20 14:23:44 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/21 19:28:59 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,9 @@ int main() {
 struct s_stack
 {
 	char	name; // Arnold: change this from 'name' which sounds inconsequential into 'order' to clarify the ascending/descending property
-	int		maxsize; // size (length) of the given input, stack_a
-	int		top;	 //(SIZE of the current array) indicates index of next insertion
+    // char    cmd[3]; //next command to be executed, if any
+	long		maxsize; // size (length) of the given input, stack_a. DO I REALLY NEED THIS?
+	long	top;	 //(SIZE of the current array) indicates index of next insertion
 	int		*array;	 // pointer to given input arrray
 };
 
@@ -56,16 +57,22 @@ void	ft_bzero(void *s, size_t n);
 void	*ft_memset(void *b, int c, size_t len);
 void	*ft_calloc(size_t count, size_t size);
 void	*my_memmove(int *dst, const int *src, size_t len);
+
+size_t	my_strlcpy(char *dst, const char *src, size_t size);
+int		ft_strncmp(const char *s1, const char *s2, size_t n);
+
 int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *stack_b);
-int		swapper(struct s_stack *stack, ...); //passing char flag instead of int or using a variadic function is more optimal but nice to use ... sometimes
-int		swapper_util(struct s_stack *stack, char do_i_print);
+int		swapper(struct s_stack *stack, ...); //passing char flag instead of int or using a variadic function is more optimal
+int		swap_one(struct s_stack *stack, char do_i_print);
 int		pusher(struct s_stack *from_stack, struct s_stack *into_stack);
 int		rotator(char reverse, char which_stck, struct s_stack *a, struct s_stack *b);
-int		rotate_util(char r_for_reverse, struct s_stack *stack, char do_i_print);
+int		rotate_one(char r_for_reverse, struct s_stack *stack, char do_i_print);
 int		is_sorted(struct s_stack *stack);
-unsigned int	find_min(struct s_stack *stack);
+int		find_min(struct s_stack *stack);
 int		find_midvalue(struct s_stack *stack);
-int		sort_three(struct s_stack *stack);
+int		sort_three(struct s_stack *stack, struct s_stack *other_stk);
+int		sort_five(struct s_stack *a, struct s_stack *b);
+
 
 #ifndef SUCCESS
 # define SUCCESS 0
