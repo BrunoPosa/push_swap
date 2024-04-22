@@ -13,13 +13,15 @@
 
 int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *stack_b)
 {
-    stack_a->name = 'a';
+	stack_a->name = 'a';
 	// ft_bzero(stack_a->cmd, 3);
+	stack_a->is_top_heavier = 0;
 	stack_a->array = NULL;
 	stack_a->maxsize = argc;
 	stack_a->top = argc - 1; //*index of* the NEXT element in array
 	stack_b->name = 'b';
 	// ft_bzero(stack_b->cmd, 3);
+	stack_b->is_top_heavier = 0;
 	stack_b->array = NULL;
 	stack_b->maxsize = argc;
 	stack_b->top = 0;
@@ -79,11 +81,40 @@ int	sort_five(struct s_stack *a, struct s_stack *b)
 	return SUCCESS;
 }
 
+// Sets TOP- OR BOTTOM-HEAVY property in stack struct.
+//maybe later handle uneven halves case, if modulo of stack.top is != 0
+
+void top_half_weigher(struct s_stack *stack)
+{
+	int	i;
+	int	mid;
+	int	bigger_than_mid;
+
+	i = stack->top - 1;
+	mid = find_midvalue(stack);
+	bigger_than_mid = 0;
+	if (stack->top < 5)
+	{
+		stack->is_top_heavier = 0;
+		return ;
+	}
+	while (i >= stack->top / 2)
+	{
+		if (stack->array[i] >= mid)
+			bigger_than_mid++;
+		i--;
+	}
+	if (bigger_than_mid > stack->top / 4)
+		stack->is_top_heavier = 'y';
+	else
+		stack->is_top_heavier = 'n';
+}
+
 /*
 	Sorts which_stack is specified, but only if containing exactly 3 elements.
 	Returns -1 if not 3 elems, OR on subfunctions' ERRORs. 
 	Reverse-rotates if rotate_one gets 'r' as its 1st argument, and just rotates if anything else e.g. ascii 'a' + ('r' - 'a') = 'r'.
-	 // can/should this sorting be done using rotator, so I could also use rr, rrr, ss? Maybe with the help of another flag argument?
+	 // can/should this also check other stack to perhaps do ss?
 */
 
 int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
@@ -118,9 +149,8 @@ int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
 }
 
 /*
-	find_midvalue returns the middle value in the given stack. Use only when more than 3 numbers in stack
+	find_midvalue returns the middle value in the given stack. Works only when more than 3 numbers in stack
 */
-
 int	find_midvalue(struct s_stack *stack)
 {
 	long	i;
@@ -142,7 +172,7 @@ int	find_midvalue(struct s_stack *stack)
 				smaller_values++;
 			j++;
 		}
-		if (smaller_values == stack->top / 2) //  better to have less pb + pa operations, so sending less values to b like (stack->top - 1) / 2 is better than stack.top / 2
+		if (smaller_values == stack->top / 2)
 			return (stack->array[i]);
 		i++;
 	}
@@ -178,16 +208,16 @@ int find_min(struct s_stack *stack)
 
 int is_sorted(struct s_stack *stack)
 {
-	unsigned int	i;
+	int	i;
 
 	i = stack->top - 1;
 	if (stack->top == 0 || stack->top == 1)
-		return (ERROR);
+		return (SUCCESS);
 	while (i >= 1)//!=0 is better but needs testing
 	{
-		if (stack->name == 'a' && stack->array[i] >= stack->array[i - 1])
+		if (stack->name == 'a' && stack->array[i] > stack->array[i - 1])
 			return (ERROR);
-		if (stack->name == 'b' && stack->array[i] <= stack->array[i - 1])
+		if (stack->name == 'b' && stack->array[i] < stack->array[i - 1])
 			return (ERROR);
 		i--;
 	}

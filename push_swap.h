@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/21 19:28:59 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/22 17:37:31 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ struct s_stack
 {
 	char	name; // Arnold: change this from 'name' which sounds inconsequential into 'order' to clarify the ascending/descending property
     // char    cmd[3]; //next command to be executed, if any
+    char    is_top_heavier;
 	long		maxsize; // size (length) of the given input, stack_a. DO I REALLY NEED THIS?
 	long	top;	 //(SIZE of the current array) indicates index of next insertion
 	int		*array;	 // pointer to given input arrray
@@ -72,6 +73,7 @@ int		find_min(struct s_stack *stack);
 int		find_midvalue(struct s_stack *stack);
 int		sort_three(struct s_stack *stack, struct s_stack *other_stk);
 int		sort_five(struct s_stack *a, struct s_stack *b);
+void	top_half_weigher(struct s_stack *stack);
 
 
 #ifndef SUCCESS
