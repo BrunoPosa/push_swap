@@ -13,13 +13,15 @@
 
 int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *stack_b)
 {
-    stack_a->name = 'a';
+	stack_a->name = 'a';
 	// ft_bzero(stack_a->cmd, 3);
+	stack_a->is_top_heavier = 0;
 	stack_a->array = NULL;
 	stack_a->maxsize = argc;
 	stack_a->top = argc - 1; //*index of* the NEXT element in array
 	stack_b->name = 'b';
 	// ft_bzero(stack_b->cmd, 3);
+	stack_b->is_top_heavier = 0;
 	stack_b->array = NULL;
 	stack_b->maxsize = argc;
 	stack_b->top = 0;
@@ -41,51 +43,93 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 	while (stack_a->top - i >= 0)
 	{
 		stack_a->array[stack_a->top - i] = ft_atoi(argv[i]);
-		printf("element at i=%d (%d) goes to stack_a position=%ld\n", i, stack_a->array[stack_a->top - i], stack_a->top - i);
+		printf("element (%d) goes to stack_a position=%d\n", stack_a->array[stack_a->top - i], stack_a->top - i);
 		i++;
 	}
     return(SUCCESS);
 }
 
-int	sort_five(struct s_stack *a, struct s_stack *b)
+/*
+	Aspiring to sort more than 5 elems here.
+*/
+// int	chunk_sorter(struct s_stack *stack, int chunk_size)
+// {
+
+// }
+
+/*
+	Aspiring to return flag 1 or 0 so the swapper or rotator can use 'r' flag for swapping or rotating both stacks accordingly.
+*/
+// int	cmd_merger(struct s_stack *a, struct s_stack *b)
+// {
+
+// }
+
+/*
+	Sends over to other stack all values less than the middle value.
+	//if it's more optimal I can make it rotate in reverse depending if the stack is top heavy (if is_top_heavier == 'y')
+*/
+
+void	stack_breaker(struct s_stack *a, struct s_stack *b)
 {
-	int	mid;
-	
-	mid = find_midvalue(a);
-	while (a->top > 3 && is_sorted(a) != SUCCESS)
+	int	midvalue;
+	int	midpoint;
+
+	midvalue = find_midvalue(a);
+	midpoint = a->top / 2;
+	if (a->top % 2 != 0)
+		midpoint += 1;
+// printf("midpoint: %d\n", midpoint);
+	while (a->top > midpoint && a->top > 3)
 	{
-		if (a->array[a->top - 1] < mid)
+		if (a->array[a->top - 1] < midvalue)
 			pusher(a, b);
-		else if (a->array[a->top - 2] < mid)
-		{
+		else if (a->array[a->top - 2] < midvalue)
 			swap_one(a, 'y');
-			if (is_sorted(a) != SUCCESS)
-				pusher(a, b);
-		}
-		else if (a->array[0] < mid)
-		{
+		else if (a->array[0] < midvalue)
 			rotate_one('r', a, 'y');
-			if (is_sorted(a) != SUCCESS)
-				pusher(a, b);
-		}
 		else
-			rotate_one('\0', a, 'y');
+			rotate_one('\0', a, 'y');// rotate_one(top_half_weigher(a) + ('r' - 'y'), a, 'y') may be unoptimal but not tested well yet. How/Why?
 	}
-	sort_three(a, b);
-	while(b->top != 0)
-		pusher(b, a);
-	if (is_sorted(a) != SUCCESS)
-		swap_one(a, 'y');
-	return SUCCESS;
+}
+
+/*
+	Sets IS_TOP_HEAVIER property of stack struct. What should happen when stack becomes 4 elements?
+	//Come back to this and optimize by handling for case with uneven halves and bigger_than_mid not being clearly bigger than 1/4th (if modulo of stack.top is != 0)
+*/
+char top_half_weigher(struct s_stack *stack)
+{
+	int	i;
+	int	mid;
+	int	bigger_than_mid;
+
+	i = stack->top - 1;
+	mid = find_midvalue(stack);
+	bigger_than_mid = 0;
+	if (stack->top < 5)
+	{
+		stack->is_top_heavier = 0;
+		return (stack->is_top_heavier);
+	}
+	while (i >= stack->top / 2)
+	{
+		if (stack->array[i] >= mid)
+			bigger_than_mid++;
+		i--;
+	}
+	if (bigger_than_mid > stack->top / 4)
+		stack->is_top_heavier = 'y';
+	else
+		stack->is_top_heavier = 'n';
+	return (stack->is_top_heavier);
 }
 
 /*
 	Sorts which_stack is specified, but only if containing exactly 3 elements.
 	Returns -1 if not 3 elems, OR on subfunctions' ERRORs. 
 	Reverse-rotates if rotate_one gets 'r' as its 1st argument, and just rotates if anything else e.g. ascii 'a' + ('r' - 'a') = 'r'.
-	 // can/should this sorting be done using rotator, so I could also use rr, rrr, ss? Maybe with the help of another flag argument?
+	 // can/should this also check other stack to perhaps do ss?
 */
-
 int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
 {
 	if (stack->top != 3)
@@ -118,9 +162,8 @@ int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
 }
 
 /*
-	find_midvalue returns the middle value in the given stack. Use only when more than 3 numbers in stack
+	find_midvalue returns the middle value in the given stack. Works only when more than 3 numbers in stack
 */
-
 int	find_midvalue(struct s_stack *stack)
 {
 	long	i;
@@ -142,7 +185,7 @@ int	find_midvalue(struct s_stack *stack)
 				smaller_values++;
 			j++;
 		}
-		if (smaller_values == stack->top / 2) //  better to have less pb + pa operations, so sending less values to b like (stack->top - 1) / 2 is better than stack.top / 2
+		if (smaller_values == stack->top / 2)
 			return (stack->array[i]);
 		i++;
 	}
@@ -152,7 +195,6 @@ int	find_midvalue(struct s_stack *stack)
 /*
 	find_min returns (int) index of the minimum value in the given stack.
 */
-
 int find_min(struct s_stack *stack)
 {
 	long	i;
@@ -178,16 +220,16 @@ int find_min(struct s_stack *stack)
 
 int is_sorted(struct s_stack *stack)
 {
-	unsigned int	i;
+	int	i;
 
 	i = stack->top - 1;
 	if (stack->top == 0 || stack->top == 1)
-		return (ERROR);
+		return (SUCCESS);
 	while (i >= 1)//!=0 is better but needs testing
 	{
-		if (stack->name == 'a' && stack->array[i] >= stack->array[i - 1])
+		if (stack->name == 'a' && stack->array[i] > stack->array[i - 1])
 			return (ERROR);
-		if (stack->name == 'b' && stack->array[i] <= stack->array[i - 1])
+		if (stack->name == 'b' && stack->array[i] < stack->array[i - 1])
 			return (ERROR);
 		i--;
 	}
