@@ -124,6 +124,35 @@ char top_half_weigher(struct s_stack *stack)
 	return (stack->is_top_heavier);
 }
 
+// Sets TOP- OR BOTTOM-HEAVY property in stack struct.
+//maybe later handle uneven halves case, if modulo of stack.top is != 0
+
+void top_half_weigher(struct s_stack *stack)
+{
+	int	i;
+	int	mid;
+	int	bigger_than_mid;
+
+	i = stack->top - 1;
+	mid = find_midvalue(stack);
+	bigger_than_mid = 0;
+	if (stack->top < 5)
+	{
+		stack->is_top_heavier = 0;
+		return ;
+	}
+	while (i >= stack->top / 2)
+	{
+		if (stack->array[i] >= mid)
+			bigger_than_mid++;
+		i--;
+	}
+	if (bigger_than_mid > stack->top / 4)
+		stack->is_top_heavier = 'y';
+	else
+		stack->is_top_heavier = 'n';
+}
+
 /*
 	Sorts which_stack is specified, but only if containing exactly 3 elements.
 	Returns -1 if not 3 elems, OR on subfunctions' ERRORs. 
