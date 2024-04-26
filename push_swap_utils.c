@@ -10,18 +10,19 @@
 /*
 	For now, initializer sets but also prints out what it sets. Later I plan for it to call InputValidator function.
 */
-
 int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *stack_b)
 {
 	stack_a->name = 'a';
 	// ft_bzero(stack_a->cmd, 3);
 	stack_a->is_top_heavier = 0;
+	stack_a->chunk_count = 0;
 	stack_a->array = NULL;
 	stack_a->maxsize = argc;
 	stack_a->top = argc - 1; //*index of* the NEXT element in array
 	stack_b->name = 'b';
 	// ft_bzero(stack_b->cmd, 3);
 	stack_b->is_top_heavier = 0;
+	stack_b->chunk_count = 0;
 	stack_b->array = NULL;
 	stack_b->maxsize = argc;
 	stack_b->top = 0;
@@ -43,19 +44,38 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 	while (stack_a->top - i >= 0)
 	{
 		stack_a->array[stack_a->top - i] = ft_atoi(argv[i]);
-		printf("element (%d) goes to stack_a position=%d\n", stack_a->array[stack_a->top - i], stack_a->top - i);
+		// printf("element (%d) goes to stack_a position=%d\n", stack_a->array[stack_a->top - i], stack_a->top - i);
 		i++;
 	}
     return(SUCCESS);
 }
 
 /*
-	Aspiring to sort more than 5 elems here.
+	Sorts one chunk at a time
+	//instead of pushing to other stack, rotate and count how many rotations done to later undo with rr
 */
-// int	chunk_sorter(struct s_stack *stack, int chunk_size)
-// {
-
-// }
+int	chunk_sorter(struct s_stack *a, struct s_stack *b)
+{
+	while (b->top > 0)
+	{
+		while (find_max(b) != b->top - 1)
+		{
+			if (find_max(b) < b->top / 2)
+			{
+				if (rotate_one('r', b, 'y') == ERROR)
+					return (ERROR);
+			}
+			else
+			{
+				if (rotate_one('\0', b, 'y') == ERROR)
+					return (ERROR);
+			}
+		}
+		if (pusher(b, a) == ERROR)
+			return (ERROR);
+	}
+	return (SUCCESS);
+}
 
 /*
 	Aspiring to return flag 1 or 0 so the swapper or rotator can use 'r' flag for swapping or rotating both stacks accordingly.
@@ -66,11 +86,10 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 // }
 
 /*
-	Sends over to other stack all values less than the middle value.
+	Sends over to other stack all values less than the middle value. Returns SUCCESS if breaks the stack and ERROR on errs. 
 	//if it's more optimal I can make it rotate in reverse depending if the stack is top heavy (if is_top_heavier == 'y')
 */
-
-void	stack_breaker(struct s_stack *a, struct s_stack *b)
+int	stack_breaker(struct s_stack *a, struct s_stack *b)
 {
 	int	midvalue;
 	int	midpoint;
@@ -79,18 +98,22 @@ void	stack_breaker(struct s_stack *a, struct s_stack *b)
 	midpoint = a->top / 2;
 	if (a->top % 2 != 0)
 		midpoint += 1;
-// printf("midpoint: %d\n", midpoint);
-	while (a->top > midpoint && a->top > 3)
+	while (a->top > midpoint && a->top > 5)
 	{
 		if (a->array[a->top - 1] < midvalue)
-			pusher(a, b);
+		{
+			if (pusher(a, b) == ERROR)
+				return (ERROR);
+		}
 		else if (a->array[a->top - 2] < midvalue)
 			swap_one(a, 'y');
 		else if (a->array[0] < midvalue)
 			rotate_one('r', a, 'y');
 		else
-			rotate_one('\0', a, 'y');// rotate_one(top_half_weigher(a) + ('r' - 'y'), a, 'y') may be unoptimal but not tested well yet. How/Why?
+			rotate_one('\0', a, 'y');
 	}
+	b->chunk_count++;
+	return (SUCCESS);
 }
 
 /*
@@ -124,33 +147,37 @@ char top_half_weigher(struct s_stack *stack)
 	return (stack->is_top_heavier);
 }
 
-// Sets TOP- OR BOTTOM-HEAVY property in stack struct.
-//maybe later handle uneven halves case, if modulo of stack.top is != 0
-
-void top_half_weigher(struct s_stack *stack)
+int	sort_five(struct s_stack *a, struct s_stack *b)
 {
-	int	i;
 	int	mid;
-	int	bigger_than_mid;
+	int undo_count = 0;
 
-	i = stack->top - 1;
-	mid = find_midvalue(stack);
-	bigger_than_mid = 0;
-	if (stack->top < 5)
+	mid = find_midvalue(a);
+	while (a->top > 3 && is_sorted(a) != SUCCESS)
 	{
-		stack->is_top_heavier = 0;
-		return ;
+		if (a->array[a->top - 1] < mid)
+			{pusher(a, b); undo_count++;}
+		else if (a->array[a->top - 2] < mid)
+		{
+			swap_one(a, 'y');
+			if (is_sorted(a) != SUCCESS)
+				{pusher(a, b); undo_count++;}
+		}
+		else if (a->array[0] < mid)
+		{
+			rotate_one('r', a, 'y');
+			if (is_sorted(a) != SUCCESS)
+				{pusher(a, b); undo_count++;}
+		}
+		else
+			rotate_one('\0', a, 'y');
 	}
-	while (i >= stack->top / 2)
-	{
-		if (stack->array[i] >= mid)
-			bigger_than_mid++;
-		i--;
-	}
-	if (bigger_than_mid > stack->top / 4)
-		stack->is_top_heavier = 'y';
-	else
-		stack->is_top_heavier = 'n';
+	sort_three(a, b);
+	while(undo_count != 0)
+		{pusher(b, a); undo_count--;}
+	if (is_sorted(a) != SUCCESS)
+		swap_one(a, 'y');
+	return SUCCESS;
 }
 
 /*
@@ -222,11 +249,33 @@ int	find_midvalue(struct s_stack *stack)
 }
 
 /*
+	find_max returns (int) index of the maximum value in the given stack. 
+	//Should start from top, as the stack b is where I use this, and it's got chunked up by stack_breaker to have bigger number chunks closer to top.
+*/
+int find_max(struct s_stack *stack)
+{
+	int		i;
+	int		max;
+
+	if (stack->top == 0)
+		return (ERROR);
+	i = stack->top - 1;
+	max = i;
+	while (i >= 0)
+	{
+		if (stack->array[i] > stack->array[max])
+			max = i;
+		i--;
+	}
+	return (max);
+}
+
+/*
 	find_min returns (int) index of the minimum value in the given stack.
 */
 int find_min(struct s_stack *stack)
 {
-	long	i;
+	int		i;
 	int		min;
 
 	i = 0;
@@ -333,7 +382,6 @@ int	pusher(struct s_stack *from_stack, struct s_stack *into_stack)
 	rotate_one - does the actual rotating, reverse or normal, depending on char r_for_reverse flag being 'r' or not.
 	Prints if do_i_print flag is 'y'. Returns 0 or positive num on success, and -1 on error.
 */
-
 int	rotate_one(char r_for_reverse, struct s_stack *stack, char do_i_print) //passing char flag instead of int or using a variadic function seems more optimal
 {
 	int	temp;

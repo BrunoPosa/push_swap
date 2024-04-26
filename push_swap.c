@@ -28,7 +28,7 @@ void	printstack_top_bottom(struct s_stack *stack)
 int main(int argc, char *argv[])
 {
 	struct s_stack stack_a;
-	struct s_stack stack_b; // make pointers and set to NULL ?
+	struct s_stack stack_b; //make pointers and set to NULL ?
 
 	// input validator here
 
@@ -36,18 +36,23 @@ int main(int argc, char *argv[])
 	if(initializer(argc, argv, &stack_a, &stack_b) == ERROR)
 		return (ERROR);
 
-	// Push_Swap logic in process
+	// Push_Swap logic minefield
 	if (is_sorted(&stack_a) == SUCCESS)
 		return (free(stack_a.array), free(stack_b.array), SUCCESS);
-	top_half_weigher(&stack_a);
-printf("Mid value: %d\n", find_midvalue(&stack_a));
-printf("topheavy? %c\n", stack_a.is_top_heavier);
-	if (stack_a.top == 3)
-		sort_three(&stack_a, &stack_b);
-	else if (stack_a.top > 3)
-		stack_breaker(&stack_a, &stack_b);
-	else if (stack_a.top < 3 && is_sorted(&stack_a) != SUCCESS)
-		swap_one(&stack_a, 'y');
+// printf("Mid value: %d\n", find_midvalue(&stack_a));
+
+	// while (is_sorted(&stack_a) != SUCCESS || (is_sorted(&stack_a) == SUCCESS && stack_b.top != 0))
+	// {
+		if (stack_a.top < 3 && is_sorted(&stack_a) != SUCCESS)
+			swap_one(&stack_a, 'y');
+		while (stack_a.top > 5)
+			stack_breaker(&stack_a, &stack_b);
+		if (stack_a.top <= 5 && stack_a.top >= 3 && is_sorted(&stack_a) != SUCCESS)
+			sort_five(&stack_a, &stack_b);
+		if (stack_b.top != 0)
+			chunk_sorter(&stack_a, &stack_b);
+	// }
+
 	// else
 	// 	return (free(stack_a.array), free(stack_b.array), printf("Sorry\n"));
 
@@ -55,8 +60,8 @@ printf("topheavy? %c\n", stack_a.is_top_heavier);
 
 	// printf("Index of MIN: %d, value: %d\n", find_min(&stack_a), stack_a.array[find_min(&stack_a)]);
 
-	printstack_top_bottom(&stack_a);
-	printstack_top_bottom(&stack_b);
+	// printstack_top_bottom(&stack_a);
+	// printstack_top_bottom(&stack_b);
 
 	// clean up
 	free(stack_a.array);
