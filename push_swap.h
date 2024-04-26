@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/25 18:47:36 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/26 12:37:23 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ struct s_stack
 	char	is_top_heavier;
 	int		maxsize; // DO I REALLY NEED THIS?  size (length) of the given input, stack_a.
 	int		top;	 //(SIZE of the current array) indicates index of next insertion
-	int		chunk_count;
 	int		*array;	 // pointer to given input arrray
 };
 

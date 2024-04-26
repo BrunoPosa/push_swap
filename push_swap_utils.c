@@ -15,14 +15,12 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 	stack_a->name = 'a';
 	// ft_bzero(stack_a->cmd, 3);
 	stack_a->is_top_heavier = 0;
-	stack_a->chunk_count = 0;
 	stack_a->array = NULL;
 	stack_a->maxsize = argc;
 	stack_a->top = argc - 1; //*index of* the NEXT element in array
 	stack_b->name = 'b';
 	// ft_bzero(stack_b->cmd, 3);
 	stack_b->is_top_heavier = 0;
-	stack_b->chunk_count = 0;
 	stack_b->array = NULL;
 	stack_b->maxsize = argc;
 	stack_b->top = 0;
@@ -98,7 +96,7 @@ int	stack_breaker(struct s_stack *a, struct s_stack *b)
 	midpoint = a->top / 2;
 	if (a->top % 2 != 0)
 		midpoint += 1;
-	while (a->top > midpoint && a->top > 5)
+	while (a->top > midpoint && a->top >= 5) // was missing the '=' in '>= 5' here! that's why it wasn't sorting fully!!
 	{
 		if (a->array[a->top - 1] < midvalue)
 		{
@@ -112,7 +110,6 @@ int	stack_breaker(struct s_stack *a, struct s_stack *b)
 		else
 			rotate_one('\0', a, 'y');
 	}
-	b->chunk_count++;
 	return (SUCCESS);
 }
 
