@@ -39,26 +39,21 @@ int main(int argc, char *argv[])
 	// Push_Swap logic minefield
 	if (is_sorted(&stack_a) == SUCCESS)
 		return (free(stack_a.array), free(stack_b.array), SUCCESS);
-// printf("Mid value: %d\n", find_midvalue(&stack_a));
-
-	// while (is_sorted(&stack_a) != SUCCESS || (is_sorted(&stack_a) == SUCCESS && stack_b.top != 0))
-	// {
-		if (stack_a.top < 3 && is_sorted(&stack_a) != SUCCESS)
-			swap_one(&stack_a, 'y');
-		while (stack_a.top > 5)
-			stack_breaker(&stack_a, &stack_b);
-		if (stack_a.top <= 5 && stack_a.top >= 3 && is_sorted(&stack_a) != SUCCESS)
-			sort_five(&stack_a, &stack_b);
-		if (stack_b.top != 0)
-			chunk_sorter(&stack_a, &stack_b);
-	// }
+	if (stack_a.top < 3 && is_sorted(&stack_a) != SUCCESS)
+		swap_one(&stack_a, 'y');
+	while (stack_a.top > 5)
+	{
+		stack_breaker(&stack_a, &stack_b);
+	}
+	if (stack_a.top <= 5 && stack_a.top >= 3 && is_sorted(&stack_a) != SUCCESS)
+		sort_five(&stack_a, &stack_b);
+	if (stack_b.top != 0)
+		insert_by_max(&stack_a, &stack_b);
 
 	// else
 	// 	return (free(stack_a.array), free(stack_b.array), printf("Sorry\n"));
 
 
-
-	// printf("Index of MIN: %d, value: %d\n", find_min(&stack_a), stack_a.array[find_min(&stack_a)]);
 
 	// printstack_top_bottom(&stack_a);
 	// printstack_top_bottom(&stack_b);

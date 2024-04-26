@@ -14,13 +14,11 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 {
 	stack_a->name = 'a';
 	// ft_bzero(stack_a->cmd, 3);
-	stack_a->is_top_heavier = 0;
 	stack_a->array = NULL;
 	stack_a->maxsize = argc;
 	stack_a->top = argc - 1; //*index of* the NEXT element in array
 	stack_b->name = 'b';
 	// ft_bzero(stack_b->cmd, 3);
-	stack_b->is_top_heavier = 0;
 	stack_b->array = NULL;
 	stack_b->maxsize = argc;
 	stack_b->top = 0;
@@ -49,10 +47,9 @@ int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack 
 }
 
 /*
-	Sorts one chunk at a time
-	//instead of pushing to other stack, rotate and count how many rotations done to later undo with rr
+	sends back values in order of max value to stack a
 */
-int	chunk_sorter(struct s_stack *a, struct s_stack *b)
+int	insert_by_max(struct s_stack *a, struct s_stack *b)
 {
 	while (b->top > 0)
 	{
@@ -89,59 +86,74 @@ int	chunk_sorter(struct s_stack *a, struct s_stack *b)
 */
 int	stack_breaker(struct s_stack *a, struct s_stack *b)
 {
-	int	midvalue;
-	int	midpoint;
+	int	splitvalue;
+	int	splitpoint;
 
-	midvalue = find_midvalue(a);
-	midpoint = a->top / 2;
+	splitvalue = find_splitvalue(a);
+	splitpoint = a->top / 2; // maybe make this divider number a variable related to size of stack?
 	if (a->top % 2 != 0)
-		midpoint += 1;
-	while (a->top > midpoint && a->top >= 5) // was missing the '=' in '>= 5' here! that's why it wasn't sorting fully!!
+		splitpoint += 1;
+	while (a->top > splitpoint && a->top >= 5)
 	{
-		if (a->array[a->top - 1] < midvalue)
+		if (a->array[a->top - 1] < splitvalue)
 		{
 			if (pusher(a, b) == ERROR)
 				return (ERROR);
 		}
-		else if (a->array[a->top - 2] < midvalue)
+		else if (a->array[a->top - 2] < splitvalue)
 			swap_one(a, 'y');
-		else if (a->array[0] < midvalue)
+		else if (a->array[0] < splitvalue)
 			rotate_one('r', a, 'y');
 		else
-			rotate_one('\0', a, 'y');
+		{
+			if (cheaper_rotate(a, splitvalue) == ERROR)
+				return (ERROR);
+		}
 	}
 	return (SUCCESS);
 }
 
 /*
-	Sets IS_TOP_HEAVIER property of stack struct. What should happen when stack becomes 4 elements?
-	//Come back to this and optimize by handling for case with uneven halves and bigger_than_mid not being clearly bigger than 1/4th (if modulo of stack.top is != 0)
+	Check first occurance of a number from the current bucket, then the last occurence, and I rotate depending which is closer. 
+	I compare and rotate accordingly until first bucket is sent.
+	Go adjust stack_breaker after this, accordingly.
 */
-char top_half_weigher(struct s_stack *stack)
+int cheaper_rotate(struct s_stack *stack, int splitvalue)
 {
 	int	i;
-	int	mid;
-	int	bigger_than_mid;
+	int	case_one;
+	int	case_two;
 
 	i = stack->top - 1;
-	mid = find_midvalue(stack);
-	bigger_than_mid = 0;
-	if (stack->top < 5)
-	{
-		stack->is_top_heavier = 0;
-		return (stack->is_top_heavier);
-	}
-	while (i >= stack->top / 2)
-	{
-		if (stack->array[i] >= mid)
-			bigger_than_mid++;
+	case_one = 0;
+	case_two = 0;
+	if (stack->top <= 3)
+		return (ERROR);
+	while (stack->array[i] >= splitvalue && i > 0)
 		i--;
-	}
-	if (bigger_than_mid > stack->top / 4)
-		stack->is_top_heavier = 'y';
+	if (stack->array[i] < splitvalue) // IS IT LESS OR EQUAL, OR JUST LESS, OR?
+		case_one = stack->top - 1 - i;
+	i = 0;
+	while (stack->array[i] >= splitvalue && i < stack->top - 1)
+		i++;
+	if (stack->array[i] < splitvalue)
+		case_two = i;
+	if (case_one <= case_two)
+		loop(case_one, stack, '\0', rotate_one);
 	else
-		stack->is_top_heavier = 'n';
-	return (stack->is_top_heavier);
+		loop(case_two, stack, 'r', rotate_one);
+	return (SUCCESS);
+}
+
+int	loop(int n, struct s_stack *stack, char r, int (*f)(char, struct s_stack *, char))
+{
+	while (n != 0)
+	{
+		if (f(r, stack, 'y') == ERROR)
+			return (ERROR);
+		n--;
+	}
+	return (SUCCESS);
 }
 
 int	sort_five(struct s_stack *a, struct s_stack *b)
@@ -149,7 +161,7 @@ int	sort_five(struct s_stack *a, struct s_stack *b)
 	int	mid;
 	int undo_count = 0;
 
-	mid = find_midvalue(a);
+	mid = find_splitvalue(a);
 	while (a->top > 3 && is_sorted(a) != SUCCESS)
 	{
 		if (a->array[a->top - 1] < mid)
@@ -215,9 +227,10 @@ int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
 }
 
 /*
-	find_midvalue returns the middle value in the given stack. Works only when more than 3 numbers in stack
+	find_midvalue returns the middle value in the given stack. Works only when more than 3 numbers in stack.
+	//	remake find_midvalue to split_value that splits the stack in 5 (buckets) instead of 2 for example. it can split in 11 for a stack of 500 numbers or more.
 */
-int	find_midvalue(struct s_stack *stack)
+int	find_splitvalue(struct s_stack *stack)
 {
 	long	i;
 	long	j;
