@@ -1,16 +1,21 @@
-/*
-	=========================
-	|	 PUSH_SWAP UTILS	|
-	=========================
-*/
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap_utils.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
+/*   Updated: 2024/04/27 20:39:49 by bposa            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "push_swap.h"
-
 
 /*
 	For now, initializer sets but also prints out what it sets. Later I plan for it to call InputValidator function.
 */
-int	initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *stack_b)
+int	initializer(int argc, char **argv, t_stack *stack_a, t_stack *stack_b)
 {
 	stack_a->name = 'a';
 	stack_a->buckets = 2;
@@ -47,9 +52,9 @@ int	initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *
 }
 
 /*
-	sends back values in order of max value to stack a
+	sends back values in order of max-value to stack a
 */
-int	insert_by_max(struct s_stack *a, struct s_stack *b)
+int	insert_by_max(t_stack *a, t_stack *b)
 {
 	while (b->top > 0)
 	{
@@ -73,24 +78,16 @@ int	insert_by_max(struct s_stack *a, struct s_stack *b)
 }
 
 /*
-	Aspiring to return flag 1 or 0 so the swapper or rotator can use 'r' flag for swapping or rotating both stacks accordingly.
-*/
-// int	cmd_merger(struct s_stack *a, struct s_stack *b)
-// {
-
-// }
-
-/*
 	Sends over to other stack all values less than the split value. Returns SUCCESS if breaks the stack and ERROR on errs. 
 */
-int	stack_breaker(struct s_stack *a, struct s_stack *b)
+int	stack_breaker(t_stack *a, t_stack *b)
 {
 	int	splitvalue;
 
 	splitvalue = find_splitvalue(a, a->buckets);
 	if (a->buckets > 2)
 		a->buckets--;
-	while (count_values_under_splitvalue(a, splitvalue) != 0)// && a->top >= 5
+	while (count_values_under_splitvalue(a, splitvalue) != 0)
 	{
 		if (a->array[a->top - 1] < splitvalue)
 		{
@@ -104,7 +101,7 @@ int	stack_breaker(struct s_stack *a, struct s_stack *b)
 		}
 		else
 		{
-			if (cheaper_rotate(a, splitvalue) == ERROR)
+			if (rotate_cheaply(a, splitvalue) == ERROR)
 				return (ERROR);
 		}
 	}
@@ -124,7 +121,7 @@ int	split_into_sqr(int number)
 		return (result - 1);
 }
 
-int	count_values_under_splitvalue(struct s_stack *stack, int splitvalue)
+int	count_values_under_splitvalue(t_stack *stack, int splitvalue)
 {
 	int	i;
 	int	count;
@@ -142,9 +139,10 @@ int	count_values_under_splitvalue(struct s_stack *stack, int splitvalue)
 
 /*
 	find_splitvalue returns the next bigger value after values in current bucket.
-	Current bucket contains at maximum bucket-size amount of smallest numbers (bucket-size = total elements / number of buckets).
+	Current bucket contains <= bucket-size amount of smallest numbers in stack.
+	(bucket-size = total elements / number of buckets).
 */
-int	find_splitvalue(struct s_stack *stack, int buckets)
+int	find_splitvalue(t_stack *stack, int buckets)
 {
 	long	i;
 	long	j;
@@ -153,8 +151,6 @@ int	find_splitvalue(struct s_stack *stack, int buckets)
 	i = 0;
 	j = 0;
 	smaller_values = 0;
-	if (stack->top < 4)
-		return (ERROR);
 	while (i != stack->top && buckets > 1)
 	{
 		j = 0;
@@ -173,38 +169,36 @@ int	find_splitvalue(struct s_stack *stack, int buckets)
 }
 
 /*
-	Check first occurance of a number from the current bucket, then the last occurence, and rotate in reverse or normally
-	depending which requires less operations to reach the top - and keep rotating until the closer of the two is on the top.
+	Rotates the stack normally or in reverse until a correct value is on top.
 	Returns ERROR on error, otherwise SUCCESS.
 */
-int cheaper_rotate(struct s_stack *stack, int splitvalue)
+int rotate_cheaply(t_stack *stack, int splitvalue)
 {
 	int	from_top;
 	int	from_bottom;
 
 	from_top = stack->top - 1;
 	from_bottom = 0;
-	if (stack->top <= 3)
-		return (ERROR);
 	while (stack->array[from_top] >= splitvalue && from_top > 0)
 		from_top--;
 	from_top = stack->top - 1 - from_top;
-	while (stack->array[from_bottom] >= splitvalue && from_bottom < stack->top - 1)
+	while (stack->array[from_bottom] >= splitvalue
+		&& from_bottom < stack->top - 1)
 		from_bottom++;
 	if (from_top <= from_bottom + 1)
 	{
-		if (loop(from_top, stack, '\0', rotate_one) == ERROR)
+		if (loop_f(from_top, stack, '\0', rotate_one) == ERROR)
 			return (ERROR);
 	}
 	else
 	{
-		if (loop(from_bottom + 1, stack, 'r', rotate_one) == ERROR) // forgot +1!! this is key bc you need to rra once more than its distance from bottom, to have it be at the top! 
+		if (loop_f(from_bottom + 1, stack, 'r', rotate_one) == ERROR)
 			return (ERROR);
 	}
 	return (SUCCESS);
 }
 
-int	loop(int n, struct s_stack *stack, char r, int (*f)(char, struct s_stack *, char))
+int	loop_f(int n, t_stack *stack, char r, int (*f)(char, t_stack *, char))
 {
 	while (n != 0)
 	{
@@ -215,52 +209,17 @@ int	loop(int n, struct s_stack *stack, char r, int (*f)(char, struct s_stack *, 
 	return (SUCCESS);
 }
 
-int	sort_five(struct s_stack *a, struct s_stack *b)
-{
-	int	mid;
-	int undo_count = 0;
-
-	mid = find_splitvalue(a, 2);
-	while (a->top > 3 && is_sorted(a) != SUCCESS)
-	{
-		if (a->array[a->top - 1] < mid)
-			{pusher(a, b); undo_count++;}
-		else if (a->array[a->top - 2] < mid)
-		{
-			swap_one(a, 'y');
-			if (is_sorted(a) != SUCCESS)
-				{pusher(a, b); undo_count++;}
-		}
-		else if (a->array[0] < mid)
-		{
-			rotate_one('r', a, 'y');
-			if (is_sorted(a) != SUCCESS)
-				{pusher(a, b); undo_count++;}
-		}
-		else
-			rotate_one('\0', a, 'y');
-	}
-	sort_three(a, b);
-	while(undo_count != 0)
-		{pusher(b, a); undo_count--;}
-	if (is_sorted(a) != SUCCESS)
-		swap_one(a, 'y');
-	return SUCCESS;
-}
-
 /*
-	Sorts which_stack is specified, but only if containing exactly 3 elements.
+	Sorts stack, that needs to contain exactly 3 values.
 	Returns ERROR if not 3 elems, OR on subfunctions' ERRORs. 
-	Reverse-rotates if rotate_one gets 'r' as its 1st argument, and just rotates if anything else e.g. ascii 'a' + ('r' - 'a') = 'r'.
+	ASCII arythmatic 'a' + 'r' - 'a' replaces a couple 'if's.
 */
-int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
+int	sort_three(t_stack *stack, t_stack *other_stk)
 {
-	if (stack->top != 3)
-		return (ERROR);
 	if (is_sorted(stack) == SUCCESS)
 		return (SUCCESS);
-	if (find_min(stack) == 2 ||
-		(stack->name == 'a' && stack->array[1] > stack->array[2]))
+	if (find_min(stack) == 2
+		|| (stack->name == 'a' && stack->array[1] > stack->array[2]))
 	{
 		if (rotate_one(stack->name + ('r' - 'a'), stack, 'y') == ERROR)
 			return (ERROR);
@@ -280,10 +239,9 @@ int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
 }
 
 /*
-	find_max returns (int) index of the maximum value in the given stack. 
-	//Should start from top, as the stack b is where I use this, and it's got chunked up by stack_breaker to have bigger number chunks closer to top.
+	find_max returns (int) index of the maximum value in the given stack.
 */
-int find_max(struct s_stack *stack)
+int find_max(t_stack *stack)
 {
 	int		i;
 	int		max;
@@ -304,7 +262,7 @@ int find_max(struct s_stack *stack)
 /*
 	find_min returns (int) index of the minimum value in the given stack.
 */
-int find_min(struct s_stack *stack)
+int find_min(t_stack *stack)
 {
 	int		i;
 	int		min;
@@ -324,17 +282,15 @@ int find_min(struct s_stack *stack)
 
 /* 
 	If sorted, returns SUCCESS, if not, returns ERROR
-	// Maybe can also find negative stack index of closest non-sorted item to stack top, as that may be useful
 */
-
-int is_sorted(struct s_stack *stack)
+int is_sorted(t_stack *stack)
 {
 	int	i;
 
 	i = stack->top - 1;
 	if (stack->top == 0 || stack->top == 1)
 		return (SUCCESS);
-	while (i >= 1)//!=0 is better but needs testing
+	while (i >= 1)
 	{
 		if (stack->name == 'a' && stack->array[i] > stack->array[i - 1])
 			return (ERROR);
@@ -346,57 +302,29 @@ int is_sorted(struct s_stack *stack)
 }
 
 /*
-	swap_one - does the actual swapping for swapper (sa or sb), and if print flag is 'p', prints out 'sa' or 'sb'
+	swap_one - does the swapping of top two values (sa or sb).
+	If print flag is 'p', prints out the operation it did.
+	Returns SUCCESS or positive number, ERROR if nothing to swap or write fails.
 */
-
-int swap_one(struct s_stack *stack, char do_i_print)
+int swap_one(t_stack *stack, char do_i_print)
 {
 	int	temp;
 
 	if (stack->top == 0 || stack->top == 1)
-		return (-1);
+		return (ERROR);
 	temp = stack->array[stack->top - 1];
 	stack->array[stack->top - 1] = stack->array[stack->top - 2];
 	stack->array[stack->top - 2] = temp;
 	if (do_i_print == 'y')
 		return (printf("s%c\n", stack->name));
-	return (0);
-}
-/*
-	swapper - variadic function taking in two or three arguments, the last MUST BE NULL as a sentinel,
-	otherwise undefined va_arg behaviour occurs. It calls swap_one with flag to print or not print its own operation.
-	DISUSE VARIADIC FUNCTIONALITY, bc it is inconsistent in the project and char flag may do the job
-*/
-
-int swapper(struct s_stack *stack, ...)
-{
-	va_list(args);
-	struct s_stack *stack_two;
-
-	va_start(args, stack);
-	stack_two = va_arg(args, struct s_stack *);
-	if (stack_two != NULL)
-	{
-		if (swap_one(stack, 'n') == -1 || swap_one(stack_two, 'n') == -1) // maybe implement -1 and -2 handling
-			return(va_end(args), ERROR);
-		return(va_end(args), printf("ss\n"));
-	}
-	else
-	{
-		if (swap_one(stack, 'y') == -1)
-			return (va_end(args), ERROR);
-	}
-	return (va_end(args), SUCCESS);
+	return (SUCCESS);
 }
 
 /*
-	pusher - performs pa and pb functionality, printing out 'pa' or 'pb' accordingly.
+	pusher - performs pa or pb, printing out 'pa' or 'pb'.
 	Returns -1 if did't execute the push and on error.
-	MAYBE This could also benefit from using a char flag 'into_stack' so there's better UX when calling this function,
-	as pusher('a', stack_a, stack_b) would be interpreted easier as push to a, and I wouldn't need to pay attention to stack order in brackets.
 */
-
-int	pusher(struct s_stack *from_stack, struct s_stack *into_stack)
+int	pusher(t_stack *from_stack, t_stack *into_stack)
 {
 	if (from_stack->top == 0)
 		return (-1);
@@ -410,10 +338,12 @@ int	pusher(struct s_stack *from_stack, struct s_stack *into_stack)
 }
 
 /*
-	rotate_one - does the actual rotating, reverse or normal, depending on char r_for_reverse flag being 'r' or not.
-	Prints if do_i_print flag is 'y'. Returns 0 or positive num on success, and -1 on error.
+	rotate_one - does the actual rotating, reverse or normal,
+	depending on char r_for_reverse flag being 'r' or not.
+	Prints if do_i_print flag is 'y'.
+	Returns 0 or positive num on success, and -1 on error.
 */
-int	rotate_one(char r_for_reverse, struct s_stack *stack, char do_i_print) //passing char flag instead of int or using a variadic function seems more optimal
+int	rotate_one(char r_for_reverse, t_stack *stack, char do_i_print)
 {
 	int	temp;
 
@@ -439,36 +369,4 @@ int	rotate_one(char r_for_reverse, struct s_stack *stack, char do_i_print) //pas
 		return (printf("r%c\n", stack->name));
 	}
 	return (SUCCESS);
-}
-
-/* 
-	Rotator rotates or reverse-rotates the specified stack (which_stck), or both if which_stck is 'r'.
-	Returns -1 on error, and 0 or positive numbers on success.
-	In rrr case, what if only ONE of rotations fails? Do I still print rrr and do i undo the other stack rotation? How can a stack rotation fail if not printing?
-*/
-int	rotator(char reverse, char which_stck, struct s_stack *a, struct s_stack *b)
-{
-    if (which_stck != a->name && which_stck != b->name && which_stck != 'r')
-        return (ERROR);
-	if (reverse == 'r')
-	{
-		if (which_stck == 'r')
-		{
-			rotate_one('r', a, 'n');
-			rotate_one('r', b, 'n');
-			return (printf("rrr\n"));
-		}
-		if (which_stck == a->name)
-			return (rotate_one('r', a, 'y'));
-		return (rotate_one('r', b, 'y'));
-	}
-	if (which_stck == 'r')
-	{
-		rotate_one('0', a, 'n');
-		rotate_one('0', b, 'n');
-		return (printf("rr\n"));
-	}
-	if (which_stck == a->name)
-		return (rotate_one('0', a, 'y'));
-	return (rotate_one('0', b, 'y'));
 }
