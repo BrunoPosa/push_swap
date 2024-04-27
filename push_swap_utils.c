@@ -6,53 +6,43 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/27 20:39:49 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/27 22:18:58 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-/*
-	For now, initializer sets but also prints out what it sets. Later I plan for it to call InputValidator function.
-*/
-int	initializer(int argc, char **argv, t_stack *stack_a, t_stack *stack_b)
+int	initializer(int argc, char **argv, t_stack *a, t_stack *b)
 {
-	stack_a->name = 'a';
-	stack_a->buckets = 2;
-	stack_a->array = NULL;
-	stack_a->maxsize = argc;
-	stack_a->top = argc - 1;
-	stack_b->name = 'b';
-	stack_b->buckets = 2;
-	stack_b->array = NULL;
-	stack_b->maxsize = argc;
-	stack_b->top = 0;
-    int i;
+	int	i;
 
-	i = 1;
-	// sanity check
+	i = 0;
+	a->name = 'a';
+	a->buckets = 2;
+	a->array = NULL;
+	a->maxsize = argc;
+	a->top = argc - 1;
+	b->name = 'b';
+	b->buckets = 2;
+	b->array = NULL;
+	b->maxsize = argc;
+	b->top = 0;
 	if (argc < 2)
 		return (ERROR);
-	// allocate stacks space and initialize to \0s, check malloc fails
-	stack_a->array = (int *)ft_calloc(stack_a->maxsize, sizeof(int));
-	if (!stack_a->array)
-		return (-printf("E")); //-1
-	stack_b->array = (int *)ft_calloc(stack_b->maxsize, sizeof(int));
-	if (!stack_b->array)
-		return (-printf("E")); //-1
-
-	// fill stack_a with arguments, converting them to integers
-	while (stack_a->top - i >= 0)
-	{
-		stack_a->array[stack_a->top - i] = ft_atoi(argv[i]);
-		// printf("element (%d) goes to stack_a position=%d\n", stack_a->array[stack_a->top - i], stack_a->top - i);
-		i++;
-	}
-    return(SUCCESS);
+	a->array = (int *)ft_calloc(a->maxsize, sizeof(int));
+	if (!a->array)
+		return (write(2, "Error\n", 6 * sizeof(char)));
+	b->array = (int *)ft_calloc(b->maxsize, sizeof(int));
+	if (!b->array)
+		return (write(2, "Error\n", 6 * sizeof(char)));
+	while (a->top - (++i) >= 0)
+		a->array[a->top - i] = ft_atoi(argv[i]);
+	return (SUCCESS);
 }
 
 /*
-	sends back values in order of max-value to stack a
+	Sends values back to a in order of max-value.
+	Returns SUCCESS, or ERROR on Write fail.
 */
 int	insert_by_max(t_stack *a, t_stack *b)
 {
@@ -78,7 +68,8 @@ int	insert_by_max(t_stack *a, t_stack *b)
 }
 
 /*
-	Sends over to other stack all values less than the split value. Returns SUCCESS if breaks the stack and ERROR on errs. 
+	Sends to stack b all values less than the split value.
+	Returns SUCCESS, or ERROR on errs.
 */
 int	stack_breaker(t_stack *a, t_stack *b)
 {
@@ -108,7 +99,7 @@ int	stack_breaker(t_stack *a, t_stack *b)
 	return (SUCCESS);
 }
 
-int	split_into_sqr(int number)
+int	split_into_sqrt(int number)
 {
 	int	result;
 
@@ -172,7 +163,7 @@ int	find_splitvalue(t_stack *stack, int buckets)
 	Rotates the stack normally or in reverse until a correct value is on top.
 	Returns ERROR on error, otherwise SUCCESS.
 */
-int rotate_cheaply(t_stack *stack, int splitvalue)
+int	rotate_cheaply(t_stack *stack, int splitvalue)
 {
 	int	from_top;
 	int	from_bottom;
@@ -241,7 +232,7 @@ int	sort_three(t_stack *stack, t_stack *other_stk)
 /*
 	find_max returns (int) index of the maximum value in the given stack.
 */
-int find_max(t_stack *stack)
+int	find_max(t_stack *stack)
 {
 	int		i;
 	int		max;
@@ -262,7 +253,7 @@ int find_max(t_stack *stack)
 /*
 	find_min returns (int) index of the minimum value in the given stack.
 */
-int find_min(t_stack *stack)
+int	find_min(t_stack *stack)
 {
 	int		i;
 	int		min;
@@ -283,7 +274,7 @@ int find_min(t_stack *stack)
 /* 
 	If sorted, returns SUCCESS, if not, returns ERROR
 */
-int is_sorted(t_stack *stack)
+int	is_sorted(t_stack *stack)
 {
 	int	i;
 
@@ -303,10 +294,10 @@ int is_sorted(t_stack *stack)
 
 /*
 	swap_one - does the swapping of top two values (sa or sb).
-	If print flag is 'p', prints out the operation it did.
+	If do_i_print flag is 'y', prints out the operation it did.
 	Returns SUCCESS or positive number, ERROR if nothing to swap or write fails.
 */
-int swap_one(t_stack *stack, char do_i_print)
+int	swap_one(t_stack *stack, char do_i_print)
 {
 	int	temp;
 

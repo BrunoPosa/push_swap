@@ -1,10 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   libft_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/27 21:47:12 by bposa             #+#    #+#             */
+/*   Updated: 2024/04/27 21:49:02 by bposa            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "push_swap.h"
 
-void ft_bzero(void *s, size_t n)
+void	ft_bzero(void *s, size_t n)
 {
-	unsigned char *str;
-	size_t i;
+	unsigned char	*str;
+	size_t			i;
 
 	str = (unsigned char *)s;
 	i = 0;
@@ -15,10 +26,10 @@ void ft_bzero(void *s, size_t n)
 	}
 }
 
-void *ft_memset(void *b, int c, size_t len)
+void	*ft_memset(void *b, int c, size_t len)
 {
-	size_t i;
-	unsigned char *s;
+	size_t			i;
+	unsigned char	*s;
 
 	s = b;
 	i = 0;
@@ -30,10 +41,10 @@ void *ft_memset(void *b, int c, size_t len)
 	return (s);
 }
 
-int ft_atoi(const char *s)
+int	ft_atoi(const char *s)
 {
-	long long sign;
-	long long result;
+	long long	sign;
+	long long	result;
 
 	sign = 1;
 	result = 0;
@@ -43,7 +54,8 @@ int ft_atoi(const char *s)
 		sign = ',' - *s++;
 	while (*s && (*s >= '0' && *s <= '9'))
 	{
-		if (result > LLONG_MAX / 10 || (result == LLONG_MAX / 10 && *s - '0' > LLONG_MAX % 10))
+		if (result > LLONG_MAX / 10
+			|| (result == LLONG_MAX / 10 && *s - '0' > LLONG_MAX % 10))
 		{
 			if (sign == -1)
 				return (0);
@@ -54,10 +66,10 @@ int ft_atoi(const char *s)
 	return (sign * result);
 }
 
-void *ft_calloc(size_t count, size_t size)
+void	*ft_calloc(size_t count, size_t size)
 {
-	void *p;
-	size_t total_size;
+	void	*p;
+	size_t	total_size;
 
 	total_size = count * size;
 	p = malloc(total_size);
@@ -67,10 +79,6 @@ void *ft_calloc(size_t count, size_t size)
 	return (p);
 }
 
-/*
-	OG memmove copies N BYTES of data, so when calling, the len has to be len * sizeof(data type) and I have to make sure it iterates as many times as precisely needed.
-	Maybe pass to this the datatype?
-*/
 void	*my_memmove(int *dst, const int *src, size_t len)
 {
 	size_t	i;
@@ -91,7 +99,7 @@ void	*my_memmove(int *dst, const int *src, size_t len)
 	{
 		while (len > 0)
 		{
-			dst[i] = src[i]; // 29.3. FIXED - THIS used to be typecasting to unsigned char. Spent 2-3 days on this, while travelling but nonetheless.
+			dst[i] = src[i];
 			i++;
 			len--;
 		}

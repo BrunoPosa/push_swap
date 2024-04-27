@@ -31,41 +31,42 @@
 // 	printf("=Top: %d, size: %d\n___________________\n", stack->top, stack->maxsize);
 // }
 
-int main(int argc, char *argv[])
+int	main(int argc, char *argv[])
 {
-	struct s_stack stack_a;
-	struct s_stack stack_b; //make pointers and set to NULL ?
+	t_stack	a;
+	t_stack	b;
 
-	// input validator here
-
-	// initializer
-	if (initializer(argc, argv, &stack_a, &stack_b) == ERROR)
+	if (initializer(argc, argv, &a, &b) == ERROR)
 		return (ERROR);
-	if (stack_a.top > 10)
-		stack_a.buckets = split_into_sqr(stack_a.top);
-
-
-	// Push_Swap logic minefield
-	if (is_sorted(&stack_a) == SUCCESS)
-		return (free(stack_a.array), free(stack_b.array), SUCCESS);
-	if (stack_a.top < 3 && is_sorted(&stack_a) != SUCCESS)
-		swap_one(&stack_a, 'y');
-	while (stack_a.top > 3)
-		stack_breaker(&stack_a, &stack_b);
-	if (is_sorted(&stack_a) != SUCCESS)
-		sort_three(&stack_a, &stack_b);
-		// sort_five(&stack_a, &stack_b, find_splitvalue(&stack_a, 2));
-	if (stack_b.top != 0)
-		insert_by_max(&stack_a, &stack_b);
-
-	// else
-	// 	return (free(stack_a.array), free(stack_b.array), printf("Sorry\n"));
-
-	// printstack_top_bottom(&stack_a);
-	// printstack_top_bottom(&stack_b);
-
-	// clean up
-	free(stack_a.array);
-	free(stack_b.array);
+	if (is_sorted(&a) == SUCCESS)
+	{
+		free(a.array);
+		free(b.array);
+		return (SUCCESS);
+	}
+	if (a.top > 10)
+		a.buckets = split_into_sqrt(a.top);
+	while (a.top > 3)
+	{
+		if (stack_breaker(&a, &b) == ERROR)
+			return (write(2, "Error\n", 6 * sizeof(char)));
+	}
+	if (a.top == 3 && is_sorted(&a) != SUCCESS)
+	{
+		if (sort_three(&a, &b) == ERROR)
+			return (write(2, "Error\n", 6 * sizeof(char)));
+	}
+	if (a.top < 3 && is_sorted(&a) != SUCCESS)
+	{
+		if (swap_one(&a, 'y') == ERROR)
+			return (write(2, "Error\n", 6 * sizeof(char)));
+	}
+	if (b.top != 0)
+	{
+		if (insert_by_max(&a, &b) == ERROR)
+			return (write(2, "Error\n", 6 * sizeof(char)));
+	}
+	free(a.array);
+	free(b.array);
 	return (SUCCESS);
 }
