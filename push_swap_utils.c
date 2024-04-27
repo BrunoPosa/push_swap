@@ -10,15 +10,15 @@
 /*
 	For now, initializer sets but also prints out what it sets. Later I plan for it to call InputValidator function.
 */
-int		initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *stack_b)
+int	initializer(int argc, char **argv, struct s_stack *stack_a, struct s_stack *stack_b)
 {
 	stack_a->name = 'a';
-	// ft_bzero(stack_a->cmd, 3);
+	stack_a->buckets = 2;
 	stack_a->array = NULL;
 	stack_a->maxsize = argc;
-	stack_a->top = argc - 1; //*index of* the NEXT element in array
+	stack_a->top = argc - 1;
 	stack_b->name = 'b';
-	// ft_bzero(stack_b->cmd, 3);
+	stack_b->buckets = 2;
 	stack_b->array = NULL;
 	stack_b->maxsize = argc;
 	stack_b->top = 0;
@@ -81,19 +81,16 @@ int	insert_by_max(struct s_stack *a, struct s_stack *b)
 // }
 
 /*
-	Sends over to other stack all values less than the middle value. Returns SUCCESS if breaks the stack and ERROR on errs. 
-	//if it's more optimal I can make it rotate in reverse depending if the stack is top heavy (if is_top_heavier == 'y')
+	Sends over to other stack all values less than the split value. Returns SUCCESS if breaks the stack and ERROR on errs. 
 */
 int	stack_breaker(struct s_stack *a, struct s_stack *b)
 {
 	int	splitvalue;
-	int	splitpoint;
 
-	splitvalue = find_splitvalue(a);
-	splitpoint = a->top / 2; // maybe make this divider number a variable related to size of stack?
-	if (a->top % 2 != 0)
-		splitpoint += 1;
-	while (a->top > splitpoint && a->top >= 5)
+	splitvalue = find_splitvalue(a, a->buckets);
+	if (a->buckets > 2)
+		a->buckets--;
+	while (count_values_under_splitvalue(a, splitvalue) != 0)// && a->top >= 5
 	{
 		if (a->array[a->top - 1] < splitvalue)
 		{
@@ -101,9 +98,10 @@ int	stack_breaker(struct s_stack *a, struct s_stack *b)
 				return (ERROR);
 		}
 		else if (a->array[a->top - 2] < splitvalue)
-			swap_one(a, 'y');
-		else if (a->array[0] < splitvalue)
-			rotate_one('r', a, 'y');
+		{
+			if (swap_one(a, 'y') == ERROR)
+				return (ERROR);
+		}
 		else
 		{
 			if (cheaper_rotate(a, splitvalue) == ERROR)
@@ -113,35 +111,96 @@ int	stack_breaker(struct s_stack *a, struct s_stack *b)
 	return (SUCCESS);
 }
 
+int	split_into_sqr(int number)
+{
+	int	result;
+
+	result = 1;
+	while ((result * result) <= number)
+		result++;
+	if (result * result == number)
+		return (result);
+	else
+		return (result - 1);
+}
+
+int	count_values_under_splitvalue(struct s_stack *stack, int splitvalue)
+{
+	int	i;
+	int	count;
+
+	i = 0;
+	count = 0;
+	while (i != stack->top)
+	{
+		if (stack->array[i] < splitvalue)
+			count++;
+		i++;
+	}
+	return (count);
+}
+
 /*
-	Check first occurance of a number from the current bucket, then the last occurence, and I rotate depending which is closer. 
-	I compare and rotate accordingly until first bucket is sent.
-	Go adjust stack_breaker after this, accordingly.
+	find_splitvalue returns the next bigger value after values in current bucket.
+	Current bucket contains at maximum bucket-size amount of smallest numbers (bucket-size = total elements / number of buckets).
+*/
+int	find_splitvalue(struct s_stack *stack, int buckets)
+{
+	long	i;
+	long	j;
+	int		smaller_values;
+
+	i = 0;
+	j = 0;
+	smaller_values = 0;
+	if (stack->top < 4)
+		return (ERROR);
+	while (i != stack->top && buckets > 1)
+	{
+		j = 0;
+		smaller_values = 0;
+		while (j != stack->top)
+		{
+			if (stack->array[i] > stack->array[j])
+				smaller_values++;
+			j++;
+		}
+		if (smaller_values == stack->top / buckets)
+			return (stack->array[i]);
+		i++;
+	}
+	return (ERROR);
+}
+
+/*
+	Check first occurance of a number from the current bucket, then the last occurence, and rotate in reverse or normally
+	depending which requires less operations to reach the top - and keep rotating until the closer of the two is on the top.
+	Returns ERROR on error, otherwise SUCCESS.
 */
 int cheaper_rotate(struct s_stack *stack, int splitvalue)
 {
-	int	i;
-	int	case_one;
-	int	case_two;
+	int	from_top;
+	int	from_bottom;
 
-	i = stack->top - 1;
-	case_one = 0;
-	case_two = 0;
+	from_top = stack->top - 1;
+	from_bottom = 0;
 	if (stack->top <= 3)
 		return (ERROR);
-	while (stack->array[i] >= splitvalue && i > 0)
-		i--;
-	if (stack->array[i] < splitvalue) // IS IT LESS OR EQUAL, OR JUST LESS, OR?
-		case_one = stack->top - 1 - i;
-	i = 0;
-	while (stack->array[i] >= splitvalue && i < stack->top - 1)
-		i++;
-	if (stack->array[i] < splitvalue)
-		case_two = i;
-	if (case_one <= case_two)
-		loop(case_one, stack, '\0', rotate_one);
+	while (stack->array[from_top] >= splitvalue && from_top > 0)
+		from_top--;
+	from_top = stack->top - 1 - from_top;
+	while (stack->array[from_bottom] >= splitvalue && from_bottom < stack->top - 1)
+		from_bottom++;
+	if (from_top <= from_bottom + 1)
+	{
+		if (loop(from_top, stack, '\0', rotate_one) == ERROR)
+			return (ERROR);
+	}
 	else
-		loop(case_two, stack, 'r', rotate_one);
+	{
+		if (loop(from_bottom + 1, stack, 'r', rotate_one) == ERROR) // forgot +1!! this is key bc you need to rra once more than its distance from bottom, to have it be at the top! 
+			return (ERROR);
+	}
 	return (SUCCESS);
 }
 
@@ -161,7 +220,7 @@ int	sort_five(struct s_stack *a, struct s_stack *b)
 	int	mid;
 	int undo_count = 0;
 
-	mid = find_splitvalue(a);
+	mid = find_splitvalue(a, 2);
 	while (a->top > 3 && is_sorted(a) != SUCCESS)
 	{
 		if (a->array[a->top - 1] < mid)
@@ -191,9 +250,8 @@ int	sort_five(struct s_stack *a, struct s_stack *b)
 
 /*
 	Sorts which_stack is specified, but only if containing exactly 3 elements.
-	Returns -1 if not 3 elems, OR on subfunctions' ERRORs. 
+	Returns ERROR if not 3 elems, OR on subfunctions' ERRORs. 
 	Reverse-rotates if rotate_one gets 'r' as its 1st argument, and just rotates if anything else e.g. ascii 'a' + ('r' - 'a') = 'r'.
-	 // can/should this also check other stack to perhaps do ss?
 */
 int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
 {
@@ -216,46 +274,9 @@ int	sort_three(struct s_stack *stack, struct s_stack *other_stk)
 			return (ERROR);
 		return (sort_three(stack, other_stk));
 	}
-	if (other_stk->top == 2 && is_sorted(other_stk) != SUCCESS)
-	{
-		if (swapper(stack, other_stk, NULL) == ERROR)
-			return (ERROR);
-	}
-	else if (swap_one(stack, 'y') == ERROR)
+	if (swap_one(stack, 'y') == ERROR)
 		return (ERROR);
 	return (sort_three(stack, other_stk));
-}
-
-/*
-	find_midvalue returns the middle value in the given stack. Works only when more than 3 numbers in stack.
-	//	remake find_midvalue to split_value that splits the stack in 5 (buckets) instead of 2 for example. it can split in 11 for a stack of 500 numbers or more.
-*/
-int	find_splitvalue(struct s_stack *stack)
-{
-	long	i;
-	long	j;
-	int		smaller_values;
-
-	i = 0;
-	j = 0;
-	smaller_values = 0;
-	if (stack->top < 4)
-		return (ERROR);
-	while (i != stack->top)
-	{
-		j = 0;
-		smaller_values = 0;
-		while (j != stack->top)
-		{
-			if (stack->array[i] > stack->array[j])
-				smaller_values++;
-			j++;
-		}
-		if (smaller_values == stack->top / 2)
-			return (stack->array[i]);
-		i++;
-	}
-	return (ERROR);
 }
 
 /*
@@ -425,7 +446,6 @@ int	rotate_one(char r_for_reverse, struct s_stack *stack, char do_i_print) //pas
 	Returns -1 on error, and 0 or positive numbers on success.
 	In rrr case, what if only ONE of rotations fails? Do I still print rrr and do i undo the other stack rotation? How can a stack rotation fail if not printing?
 */
-
 int	rotator(char reverse, char which_stck, struct s_stack *a, struct s_stack *b)
 {
     if (which_stck != a->name && which_stck != b->name && which_stck != 'r')

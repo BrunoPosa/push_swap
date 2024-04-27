@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/26 18:24:31 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/27 16:09:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 struct s_stack
 {
 	char	name;	 // Arnold: change this from 'name' which sounds inconsequential into 'order' to clarify the ascending/descending property
+	int		buckets; // buckets in stack, after start the bucket count should reduce upon each splitting (starts with 5, then 4 left, 3 .. as I empty each bucket)
 	int		maxsize; // DO I REALLY NEED THIS?  size (length) of the given input, stack_a.
 	int		top;	 //(SIZE of the current array) indicates index of next insertion
 	int		*array;	 // pointer to given input arrray
@@ -46,13 +47,15 @@ int		rotate_one(char r_for_reverse, struct s_stack *stack, char do_i_print);
 int		is_sorted(struct s_stack *stack);
 int		find_min(struct s_stack *stack);
 int		find_max(struct s_stack *stack);
-int		find_splitvalue(struct s_stack *stack);
+int		find_splitvalue(struct s_stack *stack, int buckets);
 int		sort_three(struct s_stack *stack, struct s_stack *other_stk);
 int		sort_five(struct s_stack *a, struct s_stack *b);
 int		stack_breaker(struct s_stack *a, struct s_stack *b);
 int		insert_by_max(struct s_stack *a, struct s_stack *b);
 int		cheaper_rotate(struct s_stack *stack, int splitvalue);
 int		loop(int n, struct s_stack *stack, char r, int (*f)(char, struct s_stack *, char));
+int		count_values_under_splitvalue(struct s_stack *stack, int splitvalue);
+int		split_into_sqr(int number);
 
 #ifndef SUCCESS
 # define SUCCESS 0

@@ -33,8 +33,11 @@ int main(int argc, char *argv[])
 	// input validator here
 
 	// initializer
-	if(initializer(argc, argv, &stack_a, &stack_b) == ERROR)
+	if (initializer(argc, argv, &stack_a, &stack_b) == ERROR)
 		return (ERROR);
+	if (stack_a.top > 10)
+		stack_a.buckets = split_into_sqr(stack_a.top);
+
 
 	// Push_Swap logic minefield
 	if (is_sorted(&stack_a) == SUCCESS)
@@ -42,10 +45,8 @@ int main(int argc, char *argv[])
 	if (stack_a.top < 3 && is_sorted(&stack_a) != SUCCESS)
 		swap_one(&stack_a, 'y');
 	while (stack_a.top > 5)
-	{
 		stack_breaker(&stack_a, &stack_b);
-	}
-	if (stack_a.top <= 5 && stack_a.top >= 3 && is_sorted(&stack_a) != SUCCESS)
+	if (is_sorted(&stack_a) != SUCCESS)
 		sort_five(&stack_a, &stack_b);
 	if (stack_b.top != 0)
 		insert_by_max(&stack_a, &stack_b);
