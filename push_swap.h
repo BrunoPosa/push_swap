@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/27 22:13:17 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/28 22:15:01 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # include <unistd.h> //?
 # include <stdarg.h> //?
 # include <limits.h>
-# include <stdio.h>
+# include <stdio.h> // DELETEME
 
 typedef struct s_stack
 {
@@ -41,7 +41,15 @@ void	ft_bzero(void *s, size_t n);
 void	*ft_memset(void *b, int c, size_t len);
 void	*ft_calloc(size_t count, size_t size);
 void	*my_memmove(int *dst, const int *src, size_t len);
-int		initializer(int argc, char **argv, t_stack *a, t_stack *b);
+char	**ft_split(char const *s, char c);
+size_t	ft_strlen(const char *s);
+int		has_duplicates(char **number_set);
+int		is_just_spacenumbers(char *s);
+int		count_disconnected_spaces(char *s);
+int		str_is_valid_number(char *s);
+int		substring_validator(char **input_strings, int *valid_number_count);
+int		initializer(int number_count, char **arg_list, t_stack *a, t_stack *b);
+int		input_validator(char **argv);
 int		swap_one(t_stack *stack, char do_i_print);
 int		pusher(t_stack *from_stack, t_stack *into_stack);
 int		rotate_one(char r_for_reverse, t_stack *stack, char do_i_print);

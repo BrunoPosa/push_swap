@@ -6,38 +6,140 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/27 22:18:58 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/28 22:43:11 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int	initializer(int argc, char **argv, t_stack *a, t_stack *b)
+int	initializer(int number_count, char **arg_list, t_stack *a, t_stack *b)
 {
 	int	i;
 
 	i = 0;
+	if (number_count == ERROR)
+		return (write(2, "Error\n", 6 * sizeof(char)));
 	a->name = 'a';
 	a->buckets = 2;
-	a->array = NULL;
-	a->maxsize = argc;
-	a->top = argc - 1;
-	b->name = 'b';
-	b->buckets = 2;
-	b->array = NULL;
-	b->maxsize = argc;
-	b->top = 0;
-	if (argc < 2)
-		return (ERROR);
+	a->maxsize = number_count + 1;
+	a->top = number_count;
 	a->array = (int *)ft_calloc(a->maxsize, sizeof(int));
 	if (!a->array)
 		return (write(2, "Error\n", 6 * sizeof(char)));
+	b->name = 'b';
+	b->buckets = 2;
+	b->maxsize = number_count + 1;
+	b->top = 0;
 	b->array = (int *)ft_calloc(b->maxsize, sizeof(int));
 	if (!b->array)
 		return (write(2, "Error\n", 6 * sizeof(char)));
-	while (a->top - (++i) >= 0)
-		a->array[a->top - i] = ft_atoi(argv[i]);
+	while (arg_list[i] != NULL)// a->top - ++i >= 0
+	{
+		a->array[a->top - 1 - i] = ft_atoi(arg_list[i]); //a->array[a->top - 1 - i] used to be wrongly w/o -1
+		i++;
+	}
+// printf("initializer SUCCESS\n");
 	return (SUCCESS);
+}
+
+//validates input and returns count of numbers in argv, or ERROR
+int	input_validator(char **arg_list)
+{
+	int	valid_number_count;
+
+	valid_number_count = 0;
+	if (substring_validator(arg_list, &valid_number_count) == ERROR)
+		return (ERROR);
+	if (has_duplicates(arg_list) == SUCCESS)
+		return (ERROR);
+// printf("input_validator SUCCESS\n");
+	return(valid_number_count);
+}
+
+int	substring_validator(char **input_strings, int *valid_number_count)
+{
+	if (input_strings == NULL)
+		return (ERROR);
+	while (*input_strings != NULL)
+	{
+		if (str_is_valid_number(*input_strings) == SUCCESS)
+		{
+			*valid_number_count += 1;
+			input_strings++;
+		}
+		else
+			return (ERROR);
+	}
+// printf("substring_validator SUCCESS\n");
+	return (SUCCESS);
+}
+
+// this function causing trouble. Was not accepting 0 in input numbers at all as I originally wrote it.
+//now the 's' i pass to it seems to be the full "3 2 1" instead of just the substrings, "3", "2", "1".
+int	str_is_valid_number(char *s)
+{
+	int	n;
+
+	n = ft_atoi(s);
+// printf("str_is_valid_number\n");
+	// if (ft_strlen(s) > 11 && ) //|| (ft_strlen(s) == 10 && (*s != '-' || *s != '+'))
+	// 	return (ERROR);
+	if (n == -1 && ft_strlen(s) != 2)
+		return (ERROR);
+	if (n == 0 && *s != '0')
+		return (ERROR);
+	return (SUCCESS);
+}
+
+int	has_duplicates(char **number_set)
+{
+// printf("has_duplicates\n");
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (number_set[i] != NULL)
+	{
+		j = 0;
+		while (number_set[j] != NULL)
+		{
+			if (i != j && ft_atoi(number_set[i]) == ft_atoi(number_set[j]))
+				return (SUCCESS);
+			j++;
+		}
+		i++;
+	}
+// printf("has_duplicates returns ERROR\n");
+	return (ERROR);
+}
+
+int	is_just_spacenumbers(char *s)
+{
+	while (*s != '\0')
+	{
+		if ((*s >= '0' && *s <= '9') || *s == ' ' || *s == '-' || *s == '+')
+			s++;
+		else
+			return (ERROR);
+	}
+// printf("is_just_spacenumbers, s=%s\n", s);
+	return (SUCCESS);
+}
+
+int	count_disconnected_spaces(char *s)
+{
+	int	count;
+
+	count = 0;
+	while (*(s + 1) != '\0')
+	{
+		if (*s == ' ' && *(s + 1) != ' ')
+			count++;
+		s++;
+	}
+// printf("count_disconnected_spaces\n");
+	return (count);
 }
 
 /*
