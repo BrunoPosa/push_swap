@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 21:47:12 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/28 20:58:56 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/29 10:47:18 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,10 +194,10 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
-int	ft_atoi(const char *s)
+int ft_atoi(const char *s)
 {
-	long long	sign;
-	long long	result;
+	long	sign;
+	long	result;
 
 	sign = 1;
 	result = 0;
@@ -206,19 +206,11 @@ int	ft_atoi(const char *s)
 	if (*s == '-' || *s == '+')
 		sign = ',' - *s++;
 	while (*s && (*s >= '0' && *s <= '9'))
-	{
-		if (result > LLONG_MAX / 10
-			|| (result == LLONG_MAX / 10 && *s - '0' > LLONG_MAX % 10))
-		{
-			// deleted two lines here
-			return (-1);
-		}
 		result = result * 10 + *s++ - '0';
-	}
+	if (sign * result > 2147483647 || sign * result < -2147483648)
+		return (-1);
 	return (sign * result);
 }
-
-
 
 void	*ft_calloc(size_t count, size_t size)
 {
