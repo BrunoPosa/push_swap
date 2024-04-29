@@ -65,7 +65,7 @@ int	main(int argc, char *argv[])
 	t_stack	a;
 	t_stack	b;
 
-	if (argc < 2)
+	if (argc < 2 || (argc == 2 && argv[1][0] == '\0'))
 		return (ERROR);
 	if (argc == 2 && is_just_spacenumbers(argv[1]) != SUCCESS) 
 		return (write(2, "Error\n", 6 * sizeof(char)));
