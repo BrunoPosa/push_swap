@@ -36,7 +36,7 @@ static int	core_logic(t_stack *a, t_stack *b)
 	if (is_sorted(a) == SUCCESS)
 		return (SUCCESS);
 	if (a->top > 10)
-		a->buckets = split_into_sqrt(a->top);
+		a->buckets = split_into_sqrt(a->top) / 2;
 	while (a->top > 3)
 	{
 		if (stack_breaker(a, b) == ERROR)
@@ -67,6 +67,13 @@ int	main(int argc, char *argv[])
 
 	if (argc < 2 || (argc == 2 && argv[1][0] == '\0'))
 		return (ERROR);
+	// I need to handle argument case: 3 2 1a  
+	// int i = 1;
+	// while (argv[i] != NULL)
+	// {
+	// 	if (is_just_spacenumbers(argv[i++]) != SUCCESS)
+	// 		return (write(2, "Error\n", 6 * sizeof(char)));
+	// }
 	if (argc == 2 && is_just_spacenumbers(argv[1]) != SUCCESS) 
 		return (write(2, "Error\n", 6 * sizeof(char)));
 	if (argc == 2 && count_disconnected_spaces(argv[1]) > 0) // count spaces in argv[1], enter if > 1 #Sunday
