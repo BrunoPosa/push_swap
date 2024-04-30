@@ -64,27 +64,21 @@ int	main(int argc, char *argv[])
 {
 	t_stack	a;
 	t_stack	b;
+	char	**str_args;
 
+	str_args = NULL;
 	if (argc < 2 || (argc == 2 && argv[1][0] == '\0'))
 		return (ERROR);
-	// I need to handle argument case: 3 2 1a  
-	// int i = 1;
-	// while (argv[i] != NULL)
-	// {
-	// 	if (is_just_spacenumbers(argv[i++]) != SUCCESS)
-	// 		return (write(2, "Error\n", 6 * sizeof(char)));
-	// }
-	if (argc == 2 && is_just_spacenumbers(argv[1]) != SUCCESS) 
-		return (write(2, "Error\n", 6 * sizeof(char)));
 	if (argc == 2 && count_disconnected_spaces(argv[1]) > 0) // count spaces in argv[1], enter if > 1 #Sunday
 	{
-		if (initializer(input_validator(ft_split(argv[1], ' ')), ft_split(argv[1], ' '), &a, &b) != SUCCESS)
-			return (ERROR);
+		str_args = ft_split(argv[1], ' ');
+		if (initializer(input_validator(str_args), str_args, &a, &b) != SUCCESS)
+			return (write(2, "Error\n", 6 * sizeof(char)));
 	}
 	else
 	{
 		if (initializer(input_validator(argv + 1), argv + 1, &a, &b) != SUCCESS)
-			return (ERROR);
+			return (write(2, "Error\n", 6 * sizeof(char)));
 	}
 	if (core_logic(&a, &b) == ERROR)
 		return (write(2, "Error\n", 6 * sizeof(char)));

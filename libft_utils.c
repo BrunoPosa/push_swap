@@ -6,11 +6,13 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 21:47:12 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/29 10:47:18 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/30 12:26:51 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+#include <string.h>
 
 static char	*ft_strdup(const char *s1)
 {

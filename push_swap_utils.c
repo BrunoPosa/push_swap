@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/28 22:43:11 by bposa            ###   ########.fr       */
+/*   Updated: 2024/04/30 17:32:44 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,21 @@ int	initializer(int number_count, char **arg_list, t_stack *a, t_stack *b)
 
 	i = 0;
 	if (number_count == ERROR)
-		return (write(2, "Error\n", 6 * sizeof(char)));
+		return (ERROR);
 	a->name = 'a';
 	a->buckets = 2;
 	a->maxsize = number_count + 1;
 	a->top = number_count;
 	a->array = (int *)ft_calloc(a->maxsize, sizeof(int));
 	if (!a->array)
-		return (write(2, "Error\n", 6 * sizeof(char)));
+		return (ERROR);
 	b->name = 'b';
 	b->buckets = 2;
 	b->maxsize = number_count + 1;
 	b->top = 0;
 	b->array = (int *)ft_calloc(b->maxsize, sizeof(int));
 	if (!b->array)
-		return (write(2, "Error\n", 6 * sizeof(char)));
+		return (ERROR);
 	while (arg_list[i] != NULL)// a->top - ++i >= 0
 	{
 		a->array[a->top - 1 - i] = ft_atoi(arg_list[i]); //a->array[a->top - 1 - i] used to be wrongly w/o -1
@@ -75,18 +75,20 @@ int	substring_validator(char **input_strings, int *valid_number_count)
 }
 
 // this function causing trouble. Was not accepting 0 in input numbers at all as I originally wrote it.
-//now the 's' i pass to it seems to be the full "3 2 1" instead of just the substrings, "3", "2", "1".
+// now the 's' i pass to it seems to be the full "3 2 1" instead of just the substrings, "3", "2", "1".
 int	str_is_valid_number(char *s)
 {
 	int	n;
 
 	n = ft_atoi(s);
-// printf("str_is_valid_number\n");
-	// if (ft_strlen(s) > 11 && ) //|| (ft_strlen(s) == 10 && (*s != '-' || *s != '+'))
-	// 	return (ERROR);
-	if (n == -1 && ft_strlen(s) != 2)
+	if (is_just_spacenumbers(s) != SUCCESS)
 		return (ERROR);
-	if (n == 0 && *s != '0')
+	if (n == -1)
+	{
+		if (s[0] != '-' && s[1] != '1')
+			return (ERROR);
+	}
+	if (n == 0 && s[0] != 0)
 		return (ERROR);
 	return (SUCCESS);
 }
