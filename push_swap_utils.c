@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/30 17:32:44 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/01 14:40:52 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	str_is_valid_number(char *s)
 		if (s[0] != '-' && s[1] != '1')
 			return (ERROR);
 	}
-	if (n == 0 && s[0] != 0)
+	if (n == 0 && s[ft_strlen(s)] != '0')
 		return (ERROR);
 	return (SUCCESS);
 }
