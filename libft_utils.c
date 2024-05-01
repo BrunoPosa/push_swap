@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 21:47:12 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/30 12:26:51 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/01 15:08:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,8 +207,12 @@ int ft_atoi(const char *s)
 		s++;
 	if (*s == '-' || *s == '+')
 		sign = ',' - *s++;
+	if (*s && (*s < '0' || *s > '9'))
+		return (-1);
 	while (*s && (*s >= '0' && *s <= '9'))
 		result = result * 10 + *s++ - '0';
+	if (*s && (*s < '0' || *s > '9'))
+		return (-1);
 	if (sign * result > 2147483647 || sign * result < -2147483648)
 		return (-1);
 	return (sign * result);

@@ -35,7 +35,7 @@ static int	core_logic(t_stack *a, t_stack *b)
 {
 	if (is_sorted(a) == SUCCESS)
 		return (SUCCESS);
-	if (a->top > 10)
+	if (a->top > 15)
 		a->buckets = split_into_sqrt(a->top) / 2;
 	while (a->top > 3)
 	{
@@ -69,7 +69,7 @@ int	main(int argc, char *argv[])
 	str_args = NULL;
 	if (argc < 2 || (argc == 2 && argv[1][0] == '\0'))
 		return (ERROR);
-	if (argc == 2 && count_disconnected_spaces(argv[1]) > 0) // count spaces in argv[1], enter if > 1 #Sunday
+	if (argc == 2 && count_disconnected_spaces(argv[1]) > 0)
 	{
 		str_args = ft_split(argv[1], ' ');
 		if (initializer(input_validator(str_args), str_args, &a, &b) != SUCCESS)
@@ -82,8 +82,6 @@ int	main(int argc, char *argv[])
 	}
 	if (core_logic(&a, &b) == ERROR)
 		return (write(2, "Error\n", 6 * sizeof(char)));
-	// printstack_top_bottom(&a);
-	// printstack_top_bottom(&b);
 	free(a.array);
 	free(b.array);
 	return (SUCCESS);

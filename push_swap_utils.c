@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/01 14:40:52 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/01 15:35:49 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,17 @@ int	initializer(int number_count, char **arg_list, t_stack *a, t_stack *b)
 	b->array = (int *)ft_calloc(b->maxsize, sizeof(int));
 	if (!b->array)
 		return (ERROR);
-	while (arg_list[i] != NULL)// a->top - ++i >= 0
+	while (arg_list[i] != NULL)
 	{
-		a->array[a->top - 1 - i] = ft_atoi(arg_list[i]); //a->array[a->top - 1 - i] used to be wrongly w/o -1
+		a->array[a->top - 1 - i] = ft_atoi(arg_list[i]);
 		i++;
 	}
-// printf("initializer SUCCESS\n");
 	return (SUCCESS);
 }
 
-//validates input and returns count of numbers in argv, or ERROR
+/*
+	validates input and returns count of numbers in argv, or ERROR
+*/
 int	input_validator(char **arg_list)
 {
 	int	valid_number_count;
@@ -52,8 +53,7 @@ int	input_validator(char **arg_list)
 		return (ERROR);
 	if (has_duplicates(arg_list) == SUCCESS)
 		return (ERROR);
-// printf("input_validator SUCCESS\n");
-	return(valid_number_count);
+	return (valid_number_count);
 }
 
 int	substring_validator(char **input_strings, int *valid_number_count)
@@ -70,12 +70,9 @@ int	substring_validator(char **input_strings, int *valid_number_count)
 		else
 			return (ERROR);
 	}
-// printf("substring_validator SUCCESS\n");
 	return (SUCCESS);
 }
 
-// this function causing trouble. Was not accepting 0 in input numbers at all as I originally wrote it.
-// now the 's' i pass to it seems to be the full "3 2 1" instead of just the substrings, "3", "2", "1".
 int	str_is_valid_number(char *s)
 {
 	int	n;
@@ -85,17 +82,17 @@ int	str_is_valid_number(char *s)
 		return (ERROR);
 	if (n == -1)
 	{
-		if (s[0] != '-' && s[1] != '1')
-			return (ERROR);
+		if (ft_strlen(s) == 2 && s[0] == '-' && s[1] == '1')
+			return (SUCCESS);
+		return (ERROR);
 	}
-	if (n == 0 && s[ft_strlen(s)] != '0')
+	if (n == 0 && s[ft_strlen(s) - 1] != '0')
 		return (ERROR);
 	return (SUCCESS);
 }
 
 int	has_duplicates(char **number_set)
 {
-// printf("has_duplicates\n");
 	int	i;
 	int	j;
 
@@ -112,7 +109,6 @@ int	has_duplicates(char **number_set)
 		}
 		i++;
 	}
-// printf("has_duplicates returns ERROR\n");
 	return (ERROR);
 }
 
@@ -125,7 +121,6 @@ int	is_just_spacenumbers(char *s)
 		else
 			return (ERROR);
 	}
-// printf("is_just_spacenumbers, s=%s\n", s);
 	return (SUCCESS);
 }
 
@@ -140,7 +135,6 @@ int	count_disconnected_spaces(char *s)
 			count++;
 		s++;
 	}
-// printf("count_disconnected_spaces\n");
 	return (count);
 }
 
