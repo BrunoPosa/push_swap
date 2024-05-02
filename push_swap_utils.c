@@ -6,225 +6,11 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/01 15:35:49 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/02 17:05:51 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
-
-int	initializer(int number_count, char **arg_list, t_stack *a, t_stack *b)
-{
-	int	i;
-
-	i = 0;
-	if (number_count == ERROR)
-		return (ERROR);
-	a->name = 'a';
-	a->buckets = 2;
-	a->maxsize = number_count + 1;
-	a->top = number_count;
-	a->array = (int *)ft_calloc(a->maxsize, sizeof(int));
-	if (!a->array)
-		return (ERROR);
-	b->name = 'b';
-	b->buckets = 2;
-	b->maxsize = number_count + 1;
-	b->top = 0;
-	b->array = (int *)ft_calloc(b->maxsize, sizeof(int));
-	if (!b->array)
-		return (ERROR);
-	while (arg_list[i] != NULL)
-	{
-		a->array[a->top - 1 - i] = ft_atoi(arg_list[i]);
-		i++;
-	}
-	return (SUCCESS);
-}
-
-/*
-	validates input and returns count of numbers in argv, or ERROR
-*/
-int	input_validator(char **arg_list)
-{
-	int	valid_number_count;
-
-	valid_number_count = 0;
-	if (substring_validator(arg_list, &valid_number_count) == ERROR)
-		return (ERROR);
-	if (has_duplicates(arg_list) == SUCCESS)
-		return (ERROR);
-	return (valid_number_count);
-}
-
-int	substring_validator(char **input_strings, int *valid_number_count)
-{
-	if (input_strings == NULL)
-		return (ERROR);
-	while (*input_strings != NULL)
-	{
-		if (str_is_valid_number(*input_strings) == SUCCESS)
-		{
-			*valid_number_count += 1;
-			input_strings++;
-		}
-		else
-			return (ERROR);
-	}
-	return (SUCCESS);
-}
-
-int	str_is_valid_number(char *s)
-{
-	int	n;
-
-	n = ft_atoi(s);
-	if (is_just_spacenumbers(s) != SUCCESS)
-		return (ERROR);
-	if (n == -1)
-	{
-		if (ft_strlen(s) == 2 && s[0] == '-' && s[1] == '1')
-			return (SUCCESS);
-		return (ERROR);
-	}
-	if (n == 0 && s[ft_strlen(s) - 1] != '0')
-		return (ERROR);
-	return (SUCCESS);
-}
-
-int	has_duplicates(char **number_set)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	j = 0;
-	while (number_set[i] != NULL)
-	{
-		j = 0;
-		while (number_set[j] != NULL)
-		{
-			if (i != j && ft_atoi(number_set[i]) == ft_atoi(number_set[j]))
-				return (SUCCESS);
-			j++;
-		}
-		i++;
-	}
-	return (ERROR);
-}
-
-int	is_just_spacenumbers(char *s)
-{
-	while (*s != '\0')
-	{
-		if ((*s >= '0' && *s <= '9') || *s == ' ' || *s == '-' || *s == '+')
-			s++;
-		else
-			return (ERROR);
-	}
-	return (SUCCESS);
-}
-
-int	count_disconnected_spaces(char *s)
-{
-	int	count;
-
-	count = 0;
-	while (*(s + 1) != '\0')
-	{
-		if (*s == ' ' && *(s + 1) != ' ')
-			count++;
-		s++;
-	}
-	return (count);
-}
-
-/*
-	Sends values back to a in order of max-value.
-	Returns SUCCESS, or ERROR on Write fail.
-*/
-int	insert_by_max(t_stack *a, t_stack *b)
-{
-	while (b->top > 0)
-	{
-		while (find_max(b) != b->top - 1)
-		{
-			if (find_max(b) < b->top / 2)
-			{
-				if (rotate_one('r', b, 'y') == ERROR)
-					return (ERROR);
-			}
-			else
-			{
-				if (rotate_one('\0', b, 'y') == ERROR)
-					return (ERROR);
-			}
-		}
-		if (pusher(b, a) == ERROR)
-			return (ERROR);
-	}
-	return (SUCCESS);
-}
-
-/*
-	Sends to stack b all values less than the split value.
-	Returns SUCCESS, or ERROR on errs.
-*/
-int	stack_breaker(t_stack *a, t_stack *b)
-{
-	int	splitvalue;
-
-	splitvalue = find_splitvalue(a, a->buckets);
-	if (a->buckets > 2)
-		a->buckets--;
-	while (count_values_under_splitvalue(a, splitvalue) != 0)
-	{
-		if (a->array[a->top - 1] < splitvalue)
-		{
-			if (pusher(a, b) == ERROR)
-				return (ERROR);
-		}
-		else if (a->array[a->top - 2] < splitvalue)
-		{
-			if (swap_one(a, 'y') == ERROR)
-				return (ERROR);
-		}
-		else
-		{
-			if (rotate_cheaply(a, splitvalue) == ERROR)
-				return (ERROR);
-		}
-	}
-	return (SUCCESS);
-}
-
-int	split_into_sqrt(int number)
-{
-	int	result;
-
-	result = 1;
-	while ((result * result) <= number)
-		result++;
-	if (result * result == number)
-		return (result);
-	else
-		return (result - 1);
-}
-
-int	count_values_under_splitvalue(t_stack *stack, int splitvalue)
-{
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (i != stack->top)
-	{
-		if (stack->array[i] < splitvalue)
-			count++;
-		i++;
-	}
-	return (count);
-}
 
 /*
 	find_splitvalue returns the next bigger value after values in current bucket.
@@ -255,118 +41,6 @@ int	find_splitvalue(t_stack *stack, int buckets)
 		i++;
 	}
 	return (ERROR);
-}
-
-/*
-	Rotates the stack normally or in reverse until a correct value is on top.
-	Returns ERROR on error, otherwise SUCCESS.
-*/
-int	rotate_cheaply(t_stack *stack, int splitvalue)
-{
-	int	from_top;
-	int	from_bottom;
-
-	from_top = stack->top - 1;
-	from_bottom = 0;
-	while (stack->array[from_top] >= splitvalue && from_top > 0)
-		from_top--;
-	from_top = stack->top - 1 - from_top;
-	while (stack->array[from_bottom] >= splitvalue
-		&& from_bottom < stack->top - 1)
-		from_bottom++;
-	if (from_top <= from_bottom + 1)
-	{
-		if (loop_f(from_top, stack, '\0', rotate_one) == ERROR)
-			return (ERROR);
-	}
-	else
-	{
-		if (loop_f(from_bottom + 1, stack, 'r', rotate_one) == ERROR)
-			return (ERROR);
-	}
-	return (SUCCESS);
-}
-
-int	loop_f(int n, t_stack *stack, char r, int (*f)(char, t_stack *, char))
-{
-	while (n != 0)
-	{
-		if (f(r, stack, 'y') == ERROR)
-			return (ERROR);
-		n--;
-	}
-	return (SUCCESS);
-}
-
-/*
-	Sorts stack, that needs to contain exactly 3 values.
-	Returns ERROR if not 3 elems, OR on subfunctions' ERRORs. 
-	ASCII arythmatic 'a' + 'r' - 'a' replaces a couple 'if's.
-*/
-int	sort_three(t_stack *stack, t_stack *other_stk)
-{
-	if (is_sorted(stack) == SUCCESS)
-		return (SUCCESS);
-	if (find_min(stack) == 2
-		|| (stack->name == 'a' && stack->array[1] > stack->array[2]))
-	{
-		if (rotate_one(stack->name + ('r' - 'a'), stack, 'y') == ERROR)
-			return (ERROR);
-		return (sort_three(stack, other_stk));
-	}
-	else if (find_min(stack) == 1
-		&& ((stack->name == 'a' && stack->array[2] > stack->array[0])
-			|| (stack->name == 'b' && stack->array[2] < stack->array[0])))
-	{
-		if (rotate_one(stack->name + ('r' - 'b'), stack, 'y') == ERROR)
-			return (ERROR);
-		return (sort_three(stack, other_stk));
-	}
-	if (swap_one(stack, 'y') == ERROR)
-		return (ERROR);
-	return (sort_three(stack, other_stk));
-}
-
-/*
-	find_max returns (int) index of the maximum value in the given stack.
-*/
-int	find_max(t_stack *stack)
-{
-	int		i;
-	int		max;
-
-	if (stack->top == 0)
-		return (ERROR);
-	i = stack->top - 1;
-	max = i;
-	while (i >= 0)
-	{
-		if (stack->array[i] > stack->array[max])
-			max = i;
-		i--;
-	}
-	return (max);
-}
-
-/*
-	find_min returns (int) index of the minimum value in the given stack.
-*/
-int	find_min(t_stack *stack)
-{
-	int		i;
-	int		min;
-
-	i = 0;
-	min = 0;
-	if (stack->top == 0)
-		return (ERROR);
-	while (i != stack->top)
-	{
-		if (stack->array[i] < stack->array[min])
-			min = i;
-		i++;
-	}
-	return (min);
 }
 
 /* 
@@ -405,7 +79,7 @@ int	swap_one(t_stack *stack, char do_i_print)
 	stack->array[stack->top - 1] = stack->array[stack->top - 2];
 	stack->array[stack->top - 2] = temp;
 	if (do_i_print == 'y')
-		return (printf("s%c\n", stack->name));
+		return (ft_printf("s%c\n", stack->name));
 	return (SUCCESS);
 }
 
@@ -421,7 +95,7 @@ int	pusher(t_stack *from_stack, t_stack *into_stack)
 	into_stack->top++;
 	from_stack->top--;
 	from_stack->array[from_stack->top] = 0;
-	if (printf("p%c\n", into_stack->name) == -1)
+	if (ft_printf("p%c\n", into_stack->name) == -1)
 		return (-1);
 	return (0);
 }
@@ -442,20 +116,20 @@ int	rotate_one(char r_for_reverse, t_stack *stack, char do_i_print)
 	if (r_for_reverse == 'r')
 	{
 		temp = stack->array[0];
-		my_memmove(&stack->array[0], &stack->array[1], stack->top);
+		ft_memmove(&stack->array[0], &stack->array[1], stack->top);
 		stack->array[stack->top - 1] = temp;
 	}
 	else
 	{
 		temp = stack->array[stack->top - 1];
-		my_memmove(&stack->array[1], &stack->array[0], stack->top);
+		ft_memmove(&stack->array[1], &stack->array[0], stack->top);
 		stack->array[0] = temp;
 	}
 	if (do_i_print == 'y')
 	{
 		if (r_for_reverse == 'r')
-			return (printf("rr%c\n", stack->name));
-		return (printf("r%c\n", stack->name));
+			return (ft_printf("rr%c\n", stack->name));
+		return (ft_printf("r%c\n", stack->name));
 	}
 	return (SUCCESS);
 }

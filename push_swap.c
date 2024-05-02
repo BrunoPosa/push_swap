@@ -10,55 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <unistd.h> //?
-#include <stdarg.h> //?
-#include <stdio.h>
-#include <limits.h>
-#include <stdio.h>
 #include "push_swap.h"
-
-void	printstack_top_bottom(t_stack *stack)
-{
-	int test_i = 1;
-
-	printf("printout STACK %c: top=%d\n", stack->name, stack->top);
-	while (stack->top - test_i > -1)
-	{
-		printf("elem:%d at stack  position:%d\n", stack->array[stack->top - test_i], stack->top - test_i);
-		test_i++;
-	}
-	printf("=Top: %d, size: %d\n___________________\n", stack->top, stack->maxsize);
-}
-
-static int	core_logic(t_stack *a, t_stack *b)
-{
-	if (is_sorted(a) == SUCCESS)
-		return (SUCCESS);
-	if (a->top > 15)
-		a->buckets = split_into_sqrt(a->top) / 2;
-	while (a->top > 3)
-	{
-		if (stack_breaker(a, b) == ERROR)
-			return (ERROR);
-	}
-	if (a->top == 3 && is_sorted(a) != SUCCESS)
-	{
-		if (sort_three(a, b) == ERROR)
-			return (ERROR);
-	}
-	if (a->top < 3 && is_sorted(a) != SUCCESS)
-	{
-		if (swap_one(a, 'y') == ERROR)
-			return (ERROR);
-	}
-	if (b->top != 0)
-	{
-		if (insert_by_max(a, b) == ERROR)
-			return (ERROR);
-	}
-	return (SUCCESS);
-}
+#include <stdlib.h>
+#include <unistd.h>
 
 int	main(int argc, char *argv[])
 {

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/04/30 11:40:13 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/02 17:13:28 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,8 @@
 #  define ERROR -1
 # endif
 
+# include "libftprintf/libftprintf.h"
 # include <stdlib.h>
-# include <unistd.h> //?
-# include <stdarg.h> //?
-# include <limits.h>
-# include <stdio.h> // DELETEME
 
 typedef struct s_stack
 {
@@ -36,19 +33,12 @@ typedef struct s_stack
 	int		*array;
 }	t_stack;
 
-int		ft_atoi(const char *s);
-void	ft_bzero(void *s, size_t n);
-void	*ft_memset(void *b, int c, size_t len);
-void	*ft_calloc(size_t count, size_t size);
-void	*my_memmove(int *dst, const int *src, size_t len);
-char	**ft_split(char const *s, char c);
-size_t	ft_strlen(const char *s);
+int		initializer(int num_count, char **arg_list, t_stack *a, t_stack *b);
 int		has_duplicates(char **number_set);
 int		is_just_spacenumbers(char *s);
 int		count_disconnected_spaces(char *s);
 int		str_is_valid_number(char *s);
 int		substring_validator(char **input_strings, int *valid_number_count);
-int		initializer(int number_count, char **arg_list, t_stack *a, t_stack *b);
 int		input_validator(char **argv);
 int		swap_one(t_stack *stack, char do_i_print);
 int		pusher(t_stack *from_stack, t_stack *into_stack);
@@ -58,6 +48,7 @@ int		is_sorted(t_stack *stack);
 int		find_min(t_stack *stack);
 int		find_max(t_stack *stack);
 int		find_splitvalue(t_stack *stack, int buckets);
+int		core_logic(t_stack *a, t_stack *b);
 int		sort_three(t_stack *stack, t_stack *other_stk);
 int		stack_breaker(t_stack *a, t_stack *b);
 int		insert_by_max(t_stack *a, t_stack *b);
