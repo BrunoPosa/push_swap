@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/02 17:05:51 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/03 14:33:03 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 /*
 	find_splitvalue returns the next bigger value after values in current bucket.
 	Current bucket contains <= bucket-size amount of smallest numbers in stack.
-	(bucket-size = total elements / number of buckets).
 */
 int	find_splitvalue(t_stack *stack, int buckets)
 {

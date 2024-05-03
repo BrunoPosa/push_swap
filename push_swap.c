@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "push_swap.h"
-#include <stdlib.h>
-#include <unistd.h>
 
 int	main(int argc, char *argv[])
 {
@@ -21,7 +19,7 @@ int	main(int argc, char *argv[])
 	char	**str_args;
 
 	str_args = NULL;
-	if (argc < 2 || (argc == 2 && argv[1][0] == '\0'))
+	if (argc < 2)
 		return (ERROR);
 	if (argc == 2 && count_disconnected_spaces(argv[1]) > 0)
 	{

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/02 17:13:28 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/03 15:32:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,9 @@
 #  define ERROR -1
 # endif
 
-# include "libftprintf/libftprintf.h"
+# include "libft/libft.h"
 # include <stdlib.h>
+# include <unistd.h>
 
 typedef struct s_stack
 {
