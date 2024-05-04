@@ -6,7 +6,7 @@
 #    By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/03 14:32:06 by bposa             #+#    #+#              #
-#    Updated: 2024/05/03 15:31:45 by bposa            ###   ########.fr        #
+#    Updated: 2024/05/04 17:12:57 by bposa            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,7 +61,7 @@ CFLAGS	= -Wall -Wextra -Werror
 
 all: $(NAME)
 
-$(NAME)	: $(OBJCS)
+$(NAME)	: $(SRCS) $(OBJCS)
 	ar crs $(NAME) $(OBJCS)
 
 %.o: %.c $(DEPS)
