@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 09:57:41 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/03 15:32:07 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/05 14:09:29 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_stack
 {
 	char	name;
 	int		buckets;
-	int		maxsize;
+	int		splitvalue;
 	int		top;
 	int		*array;
 }	t_stack;
@@ -56,5 +56,6 @@ int		insert_by_max(t_stack *a, t_stack *b);
 int		loop_f(int n, t_stack *stack, char r, int (*f)(char, t_stack *, char));
 int		count_values_under_splitvalue(t_stack *stack, int splitvalue);
 int		split_into_sqrt(int number);
+int		push_to_top_or_bottom(t_stack *a, t_stack *b, int midbucket);
 
 #endif

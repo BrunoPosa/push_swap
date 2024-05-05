@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:14:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/02 17:14:29 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/05 14:24:54 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,27 +104,26 @@ int	rotate_cheaply(t_stack *stack, int splitvalue)
 */
 int	stack_breaker(t_stack *a, t_stack *b)
 {
-	int	splitvalue;
+	int	midbucket_value;
 
-	splitvalue = find_splitvalue(a, a->buckets);
-	if (a->buckets > 2)
-		a->buckets--;
-	while (count_values_under_splitvalue(a, splitvalue) != 0)
+	a->splitvalue = find_splitvalue(a, a->buckets);
+	midbucket_value = find_splitvalue(a, a->buckets * 2);
+	while (count_values_under_splitvalue(a, a->splitvalue) != 0)
 	{
-		if (a->array[a->top - 1] < splitvalue
+		if (a->array[a->top - 1] < a->splitvalue
 			&& a->array[a->top - 1] < a->array[a->top - 2])
 		{
-			if (pusher(a, b) == ERROR)
+			if (push_to_top_or_bottom(a, b, midbucket_value) == ERROR)
 				return (ERROR);
 		}
-		else if (a->array[a->top - 2] < splitvalue)
+		else if (a->array[a->top - 2] < a->splitvalue)
 		{
 			if (swap_one(a, 'y') == ERROR)
 				return (ERROR);
 		}
 		else
 		{
-			if (rotate_cheaply(a, splitvalue) == ERROR)
+			if (rotate_cheaply(a, a->splitvalue) == ERROR)
 				return (ERROR);
 		}
 	}

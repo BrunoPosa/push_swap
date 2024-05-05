@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:07:58 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/03 15:26:20 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/05 14:21:07 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,16 +21,16 @@ int	initializer(int num_count, char **arg_list, t_stack *a, t_stack *b)
 		return (ERROR);
 	a->name = 'a';
 	a->buckets = 2;
-	a->maxsize = num_count + 1;
+	a->splitvalue = 0;
 	a->top = num_count;
-	a->array = (int *)ft_calloc(a->maxsize, sizeof(int));
+	a->array = (int *)ft_calloc(a->top + 1, sizeof(int));
 	if (!a->array)
 		return (ERROR);
 	b->name = 'b';
 	b->buckets = 2;
-	b->maxsize = num_count + 1;
+	b->splitvalue = 0;
 	b->top = 0;
-	b->array = (int *)ft_calloc(b->maxsize, sizeof(int));
+	b->array = (int *)ft_calloc(b->top + 1, sizeof(int));
 	if (!b->array)
 		return (ERROR);
 	while (arg_list[i] != NULL)
@@ -52,4 +52,18 @@ int	split_into_sqrt(int number)
 		return (result);
 	else
 		return (result - 1);
+}
+
+int	count_disconnected_spaces(char *s)
+{
+	int	count;
+
+	count = 0;
+	while (*(s + 1) != '\0')
+	{
+		if (*s == ' ' && *(s + 1) != ' ')
+			count++;
+		s++;
+	}
+	return (count);
 }

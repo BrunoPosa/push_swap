@@ -6,24 +6,22 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:14:50 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/03 14:53:12 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/05 14:20:56 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int	count_disconnected_spaces(char *s)
+int	push_to_top_or_bottom(t_stack *a, t_stack *b, int midbucket)
 {
-	int	count;
-
-	count = 0;
-	while (*(s + 1) != '\0')
+	if (pusher(a, b) == ERROR)
+		return (ERROR);
+	if (b->top > 1 && b->array[b->top - 1] < midbucket)
 	{
-		if (*s == ' ' && *(s + 1) != ' ')
-			count++;
-		s++;
+		if (rotate_one('\0', b, 'y') == ERROR)
+			return (ERROR);
 	}
-	return (count);
+	return (SUCCESS);
 }
 
 int	count_values_under_splitvalue(t_stack *stack, int splitvalue)
@@ -38,6 +36,11 @@ int	count_values_under_splitvalue(t_stack *stack, int splitvalue)
 		if (stack->array[i] < splitvalue)
 			count++;
 		i++;
+	}
+	if (count == 0)
+	{
+		if (stack->buckets > 2)
+			stack->buckets--;
 	}
 	return (count);
 }

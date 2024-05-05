@@ -12,7 +12,7 @@
 
 #include "push_swap.h"
 
-static int	end_free(char do_i_print, void *one, void *two, char **args)
+static int	end_free(char do_i_print_error, void *one, void *two, char **args)
 {
 	int	i;
 
@@ -30,7 +30,7 @@ static int	end_free(char do_i_print, void *one, void *two, char **args)
 		}
 		free(args);
 	}
-	if (do_i_print == 'y')
+	if (do_i_print_error == 'y')
 		write(2, "Error\n", 6 * sizeof(char));
 	return (ERROR);
 }
