@@ -6,20 +6,29 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/02 17:14:50 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/05 14:20:56 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/05 14:54:30 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
 
-int	push_to_top_or_bottom(t_stack *a, t_stack *b, int midbucket)
+/* 
+	If sorted, returns SUCCESS, if not, returns ERROR
+*/
+int	is_sorted(t_stack *stack)
 {
-	if (pusher(a, b) == ERROR)
-		return (ERROR);
-	if (b->top > 1 && b->array[b->top - 1] < midbucket)
+	int	i;
+
+	i = stack->top - 1;
+	if (stack->top == 0 || stack->top == 1)
+		return (SUCCESS);
+	while (i >= 1)
 	{
-		if (rotate_one('\0', b, 'y') == ERROR)
+		if (stack->name == 'a' && stack->array[i] > stack->array[i - 1])
 			return (ERROR);
+		if (stack->name == 'b' && stack->array[i] < stack->array[i - 1])
+			return (ERROR);
+		i--;
 	}
 	return (SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: bposa <bposa@student.hive.fi>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/27 18:52:25 by bposa             #+#    #+#             */
-/*   Updated: 2024/05/03 14:33:03 by bposa            ###   ########.fr       */
+/*   Updated: 2024/05/05 14:55:06 by bposa            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,27 +42,6 @@ int	find_splitvalue(t_stack *stack, int buckets)
 	return (ERROR);
 }
 
-/* 
-	If sorted, returns SUCCESS, if not, returns ERROR
-*/
-int	is_sorted(t_stack *stack)
-{
-	int	i;
-
-	i = stack->top - 1;
-	if (stack->top == 0 || stack->top == 1)
-		return (SUCCESS);
-	while (i >= 1)
-	{
-		if (stack->name == 'a' && stack->array[i] > stack->array[i - 1])
-			return (ERROR);
-		if (stack->name == 'b' && stack->array[i] < stack->array[i - 1])
-			return (ERROR);
-		i--;
-	}
-	return (SUCCESS);
-}
-
 /*
 	swap_one - does the swapping of top two values (sa or sb).
 	If do_i_print flag is 'y', prints out the operation it did.
@@ -79,6 +58,23 @@ int	swap_one(t_stack *stack, char do_i_print)
 	stack->array[stack->top - 2] = temp;
 	if (do_i_print == 'y')
 		return (ft_printf("s%c\n", stack->name));
+	return (SUCCESS);
+}
+
+int	push_to_top_or_bottom(t_stack *a, t_stack *b, int midbucket)
+{
+	if (pusher(a, b) == ERROR)
+		return (ERROR);
+	if (b->top > 1 && b->array[b->top - 1] < midbucket)
+	{
+		if (rotate_one('\0', b, 'y') == ERROR)
+			return (ERROR);
+	}
+	if (b->top > 1 && b->array[b->top - 2] > b->array[b->top - 1])
+	{
+		if (swap_one(b, 'y') == ERROR)
+			return (ERROR);
+	}
 	return (SUCCESS);
 }
 
